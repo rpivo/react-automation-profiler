@@ -1,5 +1,7 @@
 # react-automation-profiler
 
+Analyze your React app's renders with automated flows using Puppeteer run through React's Profiler API, and data from different builds on generated D3 charts.
+
 ## Setup
 
 To set up the React Profiler API and profile specific component trees, import `AutomationProfiler` from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile. It needs only one prop: `id: string`. Try to make the `id` short and sweet, but readable.

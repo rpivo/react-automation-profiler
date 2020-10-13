@@ -2,7 +2,7 @@
 
 ## Setup
 
-To set up the React Profiler API and profile specific component trees, import `AutomationProfiler` from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile. It needs only one prop: `id: string`.
+To set up the React Profiler API and profile specific component trees, import `AutomationProfiler` from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile. It needs only one prop: `id: string`. Try to make the `id` short and sweet, but readable.
 
 You can wrap your whole application in your index file:
 

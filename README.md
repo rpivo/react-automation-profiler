@@ -15,7 +15,7 @@ import App from 'components/App';
 import { AutomationProfiler } from 'react-automation-profiler';
 
 render(
-  <AutomationProfiler id='profiler-app'>
+  <AutomationProfiler id='p-app'>
     <App />
   </AutomationProfiler>,
   document.getElementById('root'),

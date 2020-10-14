@@ -1,6 +1,6 @@
 # react-automation-profiler
 
-Analyze your React app's renders with automated flows using Puppeteer run through React's Profiler API, and compare data from different builds on auto-generated D3 charts.
+Analyze your React app's renders with automation that auto-generate comparison charts. Run flows before and after major changes to see how it affects components and renders, or run them on every build.
 
 ## Setup
 

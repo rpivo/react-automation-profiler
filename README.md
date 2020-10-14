@@ -4,7 +4,7 @@ Analyze your React app's renders with automated flows using Puppeteer run throug
 
 ## Setup
 
-To profile specific component trees, import `AutomationProfiler` from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile. It needs only one prop: `id: string`. Try to make the `id` short and sweet, ideally five characters or less.
+To profile specific component trees, import `AutomationProfiler` from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile. It needs only one prop: `id: string`. Try to make the `id` short, ideally five characters or less. This will help with readability on charts that display many renders.
 
 You can wrap your whole application in your index file:
 

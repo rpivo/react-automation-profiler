@@ -26,7 +26,7 @@ render(
 
 ### Flows
 
-As a YAML file:
+As a YAML file:<br />
 **automation.yml**
 ```yml
 # toggle the active state of a playArea card
@@ -61,19 +61,17 @@ As a YAML file:
     selector: div.playArea
 ```
 
-As a JS module:
+As a JS module:<br />
 **automation.js**
 ```js
-import { ActionTypes } from 'react-automation-profiler';
-
-const { CLICK } = ActionTypes;
+const CLICK = 'click';
 
 export default {
-  "Toggle PlayArea Card Active": [
+  'Toggle PlayArea Card Active': [
     [CLICK, 'div.playArea div.card'],
     [CLICK, 'div.playArea'],
   ],
-  "Click Each PlayArea Card": [
+  'Click Each PlayArea Card': [
     [CLICK, 'div.playArea div.card:nth-of-type(1)'],
     [CLICK, 'div.playArea div.card:nth-of-type(2)'],
     [CLICK, 'div.playArea div.card:nth-of-type(3)'],
@@ -81,9 +79,31 @@ export default {
     [CLICK, 'div.playArea div.card:nth-of-type(5)'],
     [CLICK, 'div.playArea'],
   ],
-  "Draw Card": [
+  'Draw Card': [
     [CLICK, 'div.stackedCard'],
     [CLICK, 'div.playArea'],
+  ],
+};
+```
+
+For convenience, the `'click'` action type is the default value and can therefore be omitted:
+```js
+export default {
+  'Toggle PlayArea Card Active': [
+    'div.playArea div.card',
+    'div.playArea',
+  ],
+  'Click Each PlayArea Card': [
+    'div.playArea div.card:nth-of-type(1)',
+    'div.playArea div.card:nth-of-type(2)',
+    'div.playArea div.card:nth-of-type(3)',
+    'div.playArea div.card:nth-of-type(4)',
+    'div.playArea div.card:nth-of-type(5)',
+    'div.playArea',
+  ],
+  'Draw Card': [
+    'div.stackedCard',
+    'div.playArea',
   ],
 };
 ```

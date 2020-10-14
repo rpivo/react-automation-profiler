@@ -26,49 +26,35 @@ render(
 
 ### Flows
 
-```json
-[
-  {
-    "flow": "Toggle PlayArea Card Active",
-    "actions": [
-      {
-        "type": "click",
-        "selector": "div.playArea div.card",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea",
-      },
-    ],
-  },
-  {
-    "flow": "Click Each PlayArea Card",
-    "actions": [
-      {
-        "type": "click",
-        "selector": "div.playArea div.card:nth-of-type(1)",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea div.card:nth-of-type(2)",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea div.card:nth-of-type(3)",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea div.card:nth-of-type(4)",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea div.card:nth-of-type(5)",
-      },
-      {
-        "type": "click",
-        "selector": "div.playArea",
-      },
-    ],
-  },
-]
+```yml
+# toggle the active state of a playArea card
+- flow: Toggle PlayArea Card Active
+  actions:
+  - type: click
+    selector: div.playArea div.card
+  - type: click
+    selector: div.playArea
+  # click on each card in the playArea, one by one. Click the playArea at the end to remove
+  # card active state
+- flow: Click Each PlayArea Card
+  actions:
+  - type: click
+    selector: div.playArea div.card:nth-of-type(1)
+  - type: click
+    selector: div.playArea div.card:nth-of-type(2)
+  - type: click
+    selector: div.playArea div.card:nth-of-type(3)
+  - type: click
+    selector: div.playArea div.card:nth-of-type(4)
+  - type: click
+    selector: div.playArea div.card:nth-of-type(5)
+  - type: click
+    selector: div.playArea
+  # draw a card. click the playArea afterward to put the hand back in the hidden state
+- flow: Draw Card
+  actions:
+  - type: click
+    selector: div.stackedCard
+  - type: click
+    selector: div.playArea
 ```

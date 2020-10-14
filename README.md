@@ -86,7 +86,7 @@ export default {
 };
 ```
 
-For convenience, the `'click'` action type is the default value and can therefore be omitted:
+For convenience, the `'click'` action type is the default value and can therefore be omitted. A series of click actions can be combined into a single array:
 ```js
 export default {
   'Toggle PlayArea Card Active': [

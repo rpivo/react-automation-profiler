@@ -26,6 +26,8 @@ render(
 
 ### Flows
 
+As a YAML file:
+**automation.yml**
 ```yml
 # toggle the active state of a playArea card
 - flow: Toggle PlayArea Card Active
@@ -57,4 +59,31 @@ render(
     selector: div.stackedCard
   - type: click
     selector: div.playArea
+```
+
+As a JS module:
+**automation.js**
+```js
+import { ActionTypes } from 'react-automation-profiler';
+
+const { CLICK } = ActionTypes;
+
+export default {
+  "Toggle PlayArea Card Active": [
+    [CLICK, 'div.playArea div.card'],
+    [CLICK, 'div.playArea'],
+  ],
+  "Click Each PlayArea Card": [
+    [CLICK, 'div.playArea div.card:nth-of-type(1)'],
+    [CLICK, 'div.playArea div.card:nth-of-type(2)'],
+    [CLICK, 'div.playArea div.card:nth-of-type(3)'],
+    [CLICK, 'div.playArea div.card:nth-of-type(4)'],
+    [CLICK, 'div.playArea div.card:nth-of-type(5)'],
+    [CLICK, 'div.playArea'],
+  ],
+  "Draw Card": [
+    [CLICK, 'div.stackedCard'],
+    [CLICK, 'div.playArea'],
+  ],
+};
 ```

@@ -33,50 +33,30 @@ Export a default object containing keys that represent each of your automation f
 - `'Click Each PlayArea Card'`
 - `'Draw Card'`
 
+Import `FlowActions` from `react-automation-profiler` and use its enums to define **action types** within each flow. You can pull off `CLICK`, `FOCUS`, and `HOVER` from `FlowActions`.
+
 **flows.js**
 ```js
-import { FlowActions } from 'react-automation-profiler';
+import { ActionTypes } from 'react-automation-profiler';
 
-const { CLICK } = FlowActions;
+const { CLICK } = ActionTypes;
 
 export default {
   'Toggle PlayArea Card Active': [
-    [CLICK, 'div.playArea div.card'],
-    [CLICK, 'div.playArea'],
+    CLICK, 'div.playArea div.card',
+    CLICK, 'div.playArea',
   ],
   'Click Each PlayArea Card': [
-    [CLICK, 'div.playArea div.card:nth-of-type(1)'],
-    [CLICK, 'div.playArea div.card:nth-of-type(2)'],
-    [CLICK, 'div.playArea div.card:nth-of-type(3)'],
-    [CLICK, 'div.playArea div.card:nth-of-type(4)'],
-    [CLICK, 'div.playArea div.card:nth-of-type(5)'],
-    [CLICK, 'div.playArea'],
+    CLICK, 'div.playArea div.card:nth-of-type(1)',
+    CLICK, 'div.playArea div.card:nth-of-type(2)',
+    CLICK, 'div.playArea div.card:nth-of-type(3)',
+    CLICK, 'div.playArea div.card:nth-of-type(4)',
+    CLICK, 'div.playArea div.card:nth-of-type(5)',
+    CLICK, 'div.playArea',
   ],
   'Draw Card': [
-    [CLICK, 'div.stackedCard'],
-    [CLICK, 'div.playArea'],
-  ],
-};
-```
-
-For convenience, the `'click'` action type is the default value and can therefore be omitted. A series of click actions can be combined into a single array:
-```js
-export default {
-  'Toggle PlayArea Card Active': [
-    'div.playArea div.card',
-    'div.playArea',
-  ],
-  'Click Each PlayArea Card': [
-    'div.playArea div.card:nth-of-type(1)',
-    'div.playArea div.card:nth-of-type(2)',
-    'div.playArea div.card:nth-of-type(3)',
-    'div.playArea div.card:nth-of-type(4)',
-    'div.playArea div.card:nth-of-type(5)',
-    'div.playArea',
-  ],
-  'Draw Card': [
-    'div.stackedCard',
-    'div.playArea',
+    CLICK, 'div.stackedCard',
+    CLICK, 'div.playArea',
   ],
 };
 ```

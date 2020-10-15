@@ -28,6 +28,11 @@ render(
 
 You can define your automation flows in a file called **flows.js** at the root of your repo.
 
+Export a default object containing keys that represent each of your automation flows. In the below example, there are three flows:
+- `'Toggle PlayArea Card Active'`
+- `'Click Each PlayArea Card'`
+- `'Draw Card'`
+
 **flows.js**
 ```js
 import { FlowActions } from 'react-automation-profiler';

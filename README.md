@@ -4,7 +4,7 @@ Analyze your React app's renders with automated user flows that generate compari
 
 ## Setup
 
-### AutomationProfiler Component
+### Wrapping Components to Be Profiled With AutomationProfiler
 
 To profile specific component trees, import the `AutomationProfiler` component from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile, similarly to how React's Profiler API works. It needs only one prop: `id: string`. Try to make the `id` short. This will help with readability on charts that display many renders.
 
@@ -39,7 +39,7 @@ You can wrap as many components and at as many levels as you want. `react-automa
 
 **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
-### Flows
+### Automation Flows
 
 You can define your automation flows in a file at the root of your repo using one of these names (in order of precedence):
 - **react.automation.js**
@@ -87,3 +87,5 @@ export default {
 ```
 
 In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`.
+
+### Generating Charts

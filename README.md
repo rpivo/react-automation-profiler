@@ -24,6 +24,42 @@ render(
 );
 ```
 
+Or, you can wrap deeply nested components:
+
+```tsx
+<AutomationProfiler id='p-card'>
+  <Style
+    active={active}
+    className={`card${active ? ' active' : ''}`}
+    isHandCard={isHandCard}
+    mouseCoordinates={mouseCoordinates}
+    onClick={event => event.stopPropagation()}
+    onMouseDown={() => handleCardMouseDown(id, isHandCard)}
+    onMouseLeave={() => setIsMouseEnter(false)}
+    onMouseEnter={handleOnMouseEnter}
+  >
+    {isHandCard && isMouseEnter && !active &&
+      <span
+        className='xIcon'
+        onClick={() => handleXIconClick(id)}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        x
+      </span>
+    }
+    <p className='title'>{title}</p>
+    <p className={'subtext subtitle'}>{subtitle}</p>
+    {ability1Title &&
+      <p className='subtext ability1Title'>{ability1Title} - {ability1Description}</p>
+    }
+  </Style>
+</AutomationProfiler>
+```
+
+You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on these metrics.
+
+**Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
+
 ### Flows
 
 You can define your automation flows in a file at the root of your repo using one of these names (in order of precedence):

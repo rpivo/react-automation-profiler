@@ -36,7 +36,14 @@ Export a default object containing keys that represent each of your automation f
 - `'Click Each PlayArea Card'`
 - `'Draw Card'`
 
-Import `FlowActions` from `react-automation-profiler` and use its enums to define **action types** within each flow. You can pull off `CLICK`, `FOCUS`, and `HOVER` from `FlowActions`.
+Import `FlowActions` from `react-automation-profiler` and use its enums to define **action types** within each flow.
+
+There are currently three enums available in `ActionTypes`:
+- `CLICK`
+- `FOCUS`
+- `HOVER`
+
+Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
 
 **flows.js**
 ```js
@@ -63,3 +70,5 @@ export default {
   ],
 };
 ```
+
+In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`.

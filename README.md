@@ -46,21 +46,8 @@ You can define your automation flows in a file at the root of your repo using on
 - **automation.js**
 - **flows.js**
 
-Export a default object containing keys that represent each of your automation flows. In the below example, there are three flows:
-- `'Toggle PlayArea Card Active'`
-- `'Click Each PlayArea Card'`
-- `'Draw Card'`
+Here's an example **react.automation.js** file:
 
-Import `FlowActions` from `react-automation-profiler` and use its enums to define **action types** within each flow.
-
-There are currently three enums available in `ActionTypes`:
-- `CLICK`
-- `FOCUS`
-- `HOVER`
-
-Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
-
-**flows.js**
 ```js
 import { ActionTypes } from 'react-automation-profiler';
 
@@ -86,6 +73,20 @@ export default {
 };
 ```
 
-In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`.
+In this file, export a default object containing keys that represent each of your automation flows. In the above example, there are three flows:
+- `'Toggle PlayArea Card Active'`
+- `'Click Each PlayArea Card'`
+- `'Draw Card'`
+
+Import `ActionTypes` from `react-automation-profiler` and use its enums to define **action types** within each flow.
+
+There are currently three enums available in `ActionTypes`:
+- `CLICK`
+- `FOCUS`
+- `HOVER`
+
+Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
+
+In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`. This represents what a user would do when toggling a PlayArea Card's active state.
 
 ### Generating Charts

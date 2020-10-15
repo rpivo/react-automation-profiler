@@ -26,7 +26,10 @@ render(
 
 ### Flows
 
-You can define your automation flows in a file called **flows.js** at the root of your repo.
+You can define your automation flows in a file at the root of your repo using one of these names (in order of precedence):
+- **react.automation.js**
+- **automation.js**
+- **flows.js**
 
 Export a default object containing keys that represent each of your automation flows. In the below example, there are three flows:
 - `'Toggle PlayArea Card Active'`

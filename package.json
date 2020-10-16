@@ -1,12 +1,13 @@
 {
   "name": "react-automation-profiler",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Automated React profiling and data visualization using React's Profiler API, Puppeteer, and D3.",
   "main": "index.js",
   "bin": {
     "rap": "./lib/index.js"
   },
   "types": "./lib/types.d.ts",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rpivo/react-automation-profiler.git"

@@ -1,4 +1,4 @@
 .gitignore
 declarations.d.ts
 src
-tsconfig
+tsconfig.json

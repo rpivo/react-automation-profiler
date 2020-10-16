@@ -1,4 +1,5 @@
-#!/usr/bin/env node
-console.log('hello');
+import AutomationProfiler from 'AutomationProfiler';
 
-export default {};
+export default {
+  AutomationProfiler,
+};

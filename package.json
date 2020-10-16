@@ -1,10 +1,10 @@
 {
   "name": "react-automation-profiler",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Automated React profiling and data visualization using React's Profiler API, Puppeteer, and D3.",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "bin": {
-    "rap": "./lib/index.js"
+    "rap": "./lib/bin.js"
   },
   "types": "./lib/types.d.ts",
   "type": "module",

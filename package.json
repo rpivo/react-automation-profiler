@@ -1,6 +1,6 @@
 {
   "name": "react-automation-profiler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Automated React profiling and data visualization using React's Profiler API, Puppeteer, and D3.",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/rpivo/react-automation-profiler#readme",
   "scripts": {
-    "build": "rm -rf lib && mkdir lib && tsc",
+    "build": "rm -rf lib && mkdir lib && tsc --declaration",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

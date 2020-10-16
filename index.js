@@ -1,1 +1,2 @@
-module.exports = {};
+#!/usr/bin/env node
+console.log('hello');

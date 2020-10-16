@@ -1,5 +1,4 @@
 .gitignore
 declarations.d.ts
-node_modules
 src
 tsconfig

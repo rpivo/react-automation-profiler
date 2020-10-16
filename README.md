@@ -98,3 +98,9 @@ Each flow has the shape `[key: string]: string[]`. Each key is a string that bri
 In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`. This represents what a user would do when toggling a PlayArea Card's active state.
 
 ### Generating Charts
+
+Once `AutomationProfiler` is in use and a react.automation.js file is set up at the root of the repo, you can now call `rap` to generate charts:
+
+```sh
+rap
+```

@@ -1,5 +1,5 @@
 import AutomationProfiler from 'AutomationProfiler';
 
-export default {
+export {
   AutomationProfiler,
 };

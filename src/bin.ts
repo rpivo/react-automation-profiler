@@ -24,6 +24,7 @@ import runAutomation from './automation.js';
     port = 1235,
   } = options;
 
+  const scriptPath = fileURLToPath(import.meta.url);
   const url = `http://localhost:${port}`;
 
   const openPage = () => {
@@ -43,7 +44,6 @@ import runAutomation from './automation.js';
 
   const startServer = async () => {
     const app = express();
-    const scriptPath = fileURLToPath(import.meta.url);
 
     app.get('/', (_, res) => {
       res.sendFile(`${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}/index.html`);
@@ -54,7 +54,7 @@ import runAutomation from './automation.js';
     })
   };
 
-  await runAutomation(page)
+  await runAutomation(page, scriptPath)
     .then(await startServer)
     .then(openPage);
 })();

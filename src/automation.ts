@@ -6,7 +6,7 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async (url: string, scriptPath: string) => {
+export default async (url: string, packagePath: string) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
@@ -33,7 +33,7 @@ export default async (url: string, scriptPath: string) => {
     const fileName = getFileName(label);
 
     fs.writeFile(
-      `${scriptPath}/${fileName}`,
+      `${packagePath}/${fileName}`,
       JSON.stringify({ logs, numberOfInteractions },
       ), err => {
         if (err) throw err;

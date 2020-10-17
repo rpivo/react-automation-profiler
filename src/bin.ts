@@ -25,6 +25,7 @@ import runAutomation from './automation.js';
   } = options;
 
   const scriptPath = fileURLToPath(import.meta.url);
+  const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;
 
   const openPage = () => {
@@ -44,17 +45,11 @@ import runAutomation from './automation.js';
 
   const startServer = async () => {
     const app = express();
-
-    app.get('/', (_, res) => {
-      res.sendFile(`${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}/index.html`);
-    });
-
-    app.listen(port, () => {
-      console.log(`automation charts displaying at ${url}`);
-    })
+    app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
+    app.listen(port, () => console.log(`automation charts displaying at ${url}`));
   };
 
-  await runAutomation(page, scriptPath)
+  await runAutomation(page, packagePath)
     .then(await startServer)
     .then(openPage);
 })();

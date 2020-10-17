@@ -8,8 +8,9 @@ import path from 'path';
 // };
 
 export default async (url: string) => {
-  console.log('hello from automation with url: ', url);
-  console.log('cwd: ', path.resolve());
+  const cwd = path.resolve();
+  import(`${cwd}/react.automation.js`)
+    .then(flows => console.log('successfully imported file', flows));
   return;
   // const browser = await puppeteer.launch();
   // const page = await browser.newPage() as StringIndexablePage;

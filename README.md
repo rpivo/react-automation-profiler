@@ -102,5 +102,5 @@ In the example above, the first flow `'Toggle PlayArea Card Active'` has two act
 Once `AutomationProfiler` is in use and a react.automation.js file is set up at the root of the repo, you can now call `rap` to generate charts:
 
 ```sh
-rap
+rap --output=automation
 ```

@@ -1,4 +1,4 @@
-import AutomationProfiler from 'AutomationProfiler';
+import AutomationProfiler from './AutomationProfiler';
 
 export {
   AutomationProfiler,

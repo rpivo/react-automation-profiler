@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { exec } from 'child_process';
 import express from 'express';
+import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 
 (async () => {
@@ -35,11 +36,14 @@ import yargs from 'yargs';
   };
 
   const startServer = async () => {
+    const HTML_FILE = 'index.html';
+    
     const app = express();
+    const scriptPath = fileURLToPath(import.meta.url);
 
-    app.get('/', (req, res) => {
-      res.send('Hello World!')
-    })
+    app.get('/', (_, res) => {
+      res.sendFile(`${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}/${HTML_FILE}`);
+    });
 
     app.listen(port, () => {
       console.log(`Example app listening at ${url}`);

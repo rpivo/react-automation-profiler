@@ -70,5 +70,5 @@ export default async (url: string, packagePath: string) => {
             numberOfInteractions: (actions as string[]).length / 2,
           }));
       }
-    }).then(await browser.close);
+    }).then(browser.close);
 };

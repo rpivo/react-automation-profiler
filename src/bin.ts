@@ -36,13 +36,11 @@ import yargs from 'yargs';
   };
 
   const startServer = async () => {
-    const HTML_FILE = 'index.html';
-    
     const app = express();
     const scriptPath = fileURLToPath(import.meta.url);
 
     app.get('/', (_, res) => {
-      res.sendFile(`${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}/${HTML_FILE}`);
+      res.sendFile(`${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}/index.html`);
     });
 
     app.listen(port, () => {

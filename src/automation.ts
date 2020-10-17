@@ -1,4 +1,5 @@
 // import fs from 'fs';
+import path from 'path';
 // import puppeteer, { Page } from 'puppeteer';
 // const flows = require('./flows');
 
@@ -8,6 +9,7 @@
 
 export default async (url: string) => {
   console.log('hello from automation with url: ', url);
+  console.log('cwd: ', path.resolve());
   return;
   // const browser = await puppeteer.launch();
   // const page = await browser.newPage() as StringIndexablePage;

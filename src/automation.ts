@@ -70,7 +70,5 @@ export default async (url: string, scriptPath: string) => {
             numberOfInteractions: (actions as string[]).length / 2,
           }));
       }
-    });
-
-  await browser.close();
+    }).then(await browser.close);
 };

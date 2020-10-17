@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
+import runAutomation from './automation';
 
 (async () => {
   const options = yargs
@@ -37,8 +38,6 @@ import yargs from 'yargs';
       }
     };
 
-    console.log('page to be tested: ', page);
-
     exec(`${startCommand()} ${url}`);
   };
 
@@ -51,9 +50,11 @@ import yargs from 'yargs';
     });
 
     app.listen(port, () => {
-      console.log(`Example app listening at ${url}`);
+      console.log(`automation charts displaying at ${url}`);
     })
   };
 
-  await startServer().then(openPage);
+  await runAutomation(page)
+    .then(await startServer)
+    .then(openPage);
 })();

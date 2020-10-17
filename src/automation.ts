@@ -1,12 +1,14 @@
 import fs from 'fs';
 import puppeteer, { Page } from 'puppeteer';
-const flows = require('./flows');
+// const flows = require('./flows');
 
 type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async () => {
+export default async (url: string) => {
+  console.log('hello from automation with url: ', url);
+  return;
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 

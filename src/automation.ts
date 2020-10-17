@@ -32,7 +32,7 @@ export default async (url: string, packagePath: string) => {
     const logs = await page.evaluate(() => window.profiler);
     const fileName = getFileName(label);
 
-    fs.writeFile(
+    await fs.writeFile(
       `${packagePath}/${fileName}`,
       JSON.stringify({ logs, numberOfInteractions },
       ), err => {
@@ -49,26 +49,26 @@ export default async (url: string, packagePath: string) => {
     for (let i = 0; i < actions.length; i += 2) await page[actions[i]](actions[i + 1]);
   };
 
-  await page.goto(url);
+  const runFlows = async () => {
+    const cwd = path.resolve();
+    const file = await import(`${cwd}/react.automation.js`);
+    const { default: flows } = file;
+    for (const [flow, actions] of Object.entries(flows)) {
+      await handleActions(actions as string[])
+        .then(() => collectLogs({
+          label: flow,
+          numberOfInteractions: (actions as string[]).length / 2,
+        }));
+    }
+  };
 
+  await page.goto(url);
   await page.setViewport({
     deviceScaleFactor: 1,
     height: 1080,
     width: 1920,
   });
-
-  collectLogs({ label: 'Mount' });
-
-  const cwd = path.resolve();
-  import(`${cwd}/react.automation.js`)
-    .then(async file => {
-      const { default: flows } = file;
-      for (const [flow, actions] of Object.entries(flows)) {
-        await handleActions(actions as string[])
-          .then(() => collectLogs({
-            label: flow,
-            numberOfInteractions: (actions as string[]).length / 2,
-          }));
-      }
-    }).then(browser.close);
+  await collectLogs({ label: 'Mount' });
+  await runFlows();
+  await browser.close();
 };

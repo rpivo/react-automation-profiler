@@ -6,15 +6,20 @@ import yargs from 'yargs';
 
 (async () => {
   const options = yargs
-    .usage('Usage: -p <port>')
-    .option('p', {
-      alias: 'port',
+    .usage('Usage: --page <page> --port <port>')
+    .option('page', {
+      describe: 'page to be tested',
+      type: 'string',
+      demandOption: true,
+    })
+    .option('port', {
       describe: 'port to be used for server',
       type: 'number',
     })
     .argv;
 
   const {
+    page,
     port = 1235,
   } = options;
 
@@ -31,6 +36,8 @@ import yargs from 'yargs';
           return 'xdg-open';
       }
     };
+
+    console.log('page to be tested: ', page);
 
     exec(`${startCommand()} ${url}`);
   };

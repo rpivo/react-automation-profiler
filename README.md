@@ -99,8 +99,17 @@ In the example above, the first flow `'Toggle PlayArea Card Active'` has two act
 
 ### Generating Charts
 
-Once `AutomationProfiler` is in use and a react.automation.js file is set up at the root of the repo, you can now call `rap` to generate charts:
+There are a few prerequisites before you can start generating charts:
+- `AutomationProfiler` must be wrapping at least one of your components.
+- A **react.automation.js** (or similar) file should be set up at the root of your repo.
+- Your app should be running locally (ex: running at `http://localhost:8000/index.html`).
+
+After that, you can then call the `rap` command to generate charts:
 
 ```sh
-rap --port=3000
+rap --page=http://localhost:8000/index.html --port=3000
 ```
+
+`rap` options:
+- `page` (required): the page that automation will be run on.
+- `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { exec } from 'child_process';
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import runAutomation from './automation.js';
@@ -28,6 +30,18 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;
 
+  const deleteJsonFiles = async () => {
+    await fs.readdir(scriptPath, (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        console.log({ file });
+        // fs.unlink(path.join(scriptPath, file), err => {
+        //   if (err) throw err;
+        // });
+      }
+    });
+  };
+
   const openPage = () => {
     const startCommand = () => {
       switch (process.platform) {
@@ -49,7 +63,8 @@ import runAutomation from './automation.js';
     app.listen(port, () => console.log(`automation charts displaying at ${url}`));
   };
 
-  await runAutomation(page, packagePath)
-    .then(await startServer)
-    .then(openPage);
+  await deleteJsonFiles
+  await runAutomation(page, packagePath);
+  await startServer();
+  await openPage();
 })();

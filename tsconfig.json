@@ -5,7 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": ["DOM", "ESNext"],
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,

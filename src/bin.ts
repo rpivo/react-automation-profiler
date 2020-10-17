@@ -31,13 +31,12 @@ import runAutomation from './automation.js';
   const url = `http://localhost:${port}`;
 
   const deleteJsonFiles = async () => {
-    await fs.readdir(scriptPath, (err, files) => {
+    await fs.readdir(packagePath, (err, files) => {
       if (err) throw err;
       for (const file of files) {
-        console.log({ file });
-        // fs.unlink(path.join(scriptPath, file), err => {
-        //   if (err) throw err;
-        // });
+        if (file.includes('.json')) fs.unlink(path.join(packagePath, file), err => {
+          if (err) throw err;
+        });
       }
     });
   };
@@ -63,7 +62,7 @@ import runAutomation from './automation.js';
     app.listen(port, () => console.log(`automation charts displaying at ${url}`));
   };
 
-  await deleteJsonFiles
+  await deleteJsonFiles();
   await runAutomation(page, packagePath);
   await startServer();
   await openPage();

@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import runAutomation from './automation';
+import runAutomation from './automation.js';
 
 (async () => {
   const options = yargs

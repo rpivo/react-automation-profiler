@@ -98,6 +98,7 @@ import runAutomation from './automation.js';
       script: `${packagePath}/watch.js`,
       watch: [`${cwd}/${watch}/`],
     });
+    nodemon.on('quit', () => process.exit());
   }
 
   await deleteJsonFiles();

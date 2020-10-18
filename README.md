@@ -57,11 +57,9 @@ You can define your automation flows in a file at the root of your repo using on
 Here's an example **react.automation.js** file:
 
 ```js
-import { ActionTypes } from 'react-automation-profiler';
+const CLICK = 'click';
 
-const { CLICK } = ActionTypes;
-
-export default {
+module.exports = {
   'Toggle PlayArea Card Active': [
     CLICK, 'div.playArea div.card',
     CLICK, 'div.playArea',
@@ -86,12 +84,10 @@ In this file, export a default object containing keys that represent each of you
 - `'Click Each PlayArea Card'`
 - `'Draw Card'`
 
-Import `ActionTypes` from `react-automation-profiler` and use its enums to define **action types** within each flow.
-
-There are currently three enums available in `ActionTypes`:
-- `CLICK`
-- `FOCUS`
-- `HOVER`
+There are currently three **action types** that can be used in **react.automation.js**:
+- `'click'`
+- '`focus`'
+- '`hover`'
 
 Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
 

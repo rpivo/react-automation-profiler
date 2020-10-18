@@ -31,8 +31,6 @@ import runAutomation from './automation.js';
     port = 1235,
   } = options;
 
-  console.log('includeMount: ', includeMount);
-
   const scriptPath = fileURLToPath(import.meta.url);
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;

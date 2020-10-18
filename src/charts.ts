@@ -128,7 +128,8 @@ const {
       })
   );
 
-  const scaleMax = Math.floor(Math.max(...allJsonValues)) + 1;
+  const tallestRect = Math.max(...allJsonValues);
+  const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
   for (const [id, file] of jsonFiles.entries()) {
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

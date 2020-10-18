@@ -45,6 +45,8 @@ export default () =>
 
 You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user experience flows.
 
+> **Note:** `AutomationProfiler` is TypeScript-compatible.
+
 > **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
 ### Automation Flows
@@ -105,11 +107,11 @@ There are a few prerequisites before you can start generating charts:
 After that, you can then call the `rap` command to generate charts:
 
 ```sh
-npx rap --page=http://localhost:8000/index.html -- watch
+npx rap --page=http://localhost:8000/index.html --watch=src
 ```
 
 #### `rap` options
 - `page` (required): the page that automation will be run on.
 - `skipMount` (optional): excludes the initial `mount` phase renders that happen before any automation flows are initialized.
 - `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.
-- `watch` (optional)
+- `watch` (optional): rerun `rap` on any changes to the given folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow.

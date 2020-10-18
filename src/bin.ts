@@ -30,6 +30,20 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;
 
+
+  const createJsonList = async () => {
+    const jsonList: string[] = [];
+    await fs.readdir(packagePath, async (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        if (file.includes('.json')) jsonList.push(file);
+      }
+      await fs.writeFile(`${packagePath}/jsonList.dsv`, jsonList.join(' '),  err => {
+        if (err) throw err;
+      });
+    });
+  };
+
   const deleteJsonFiles = async () => {
     await fs.readdir(packagePath, (err, files) => {
       if (err) throw err;
@@ -57,12 +71,14 @@ import runAutomation from './automation.js';
 
   const startServer = async () => {
     const app = express();
+    app.use(express.static(packagePath));
     app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
     app.listen(port, () => console.log(`automation charts displaying at ${url}`));
   };
 
   await deleteJsonFiles();
   await runAutomation(page, packagePath);
+  await createJsonList();
   await startServer();
   await openPage();
 })();

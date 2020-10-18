@@ -101,11 +101,11 @@ const {
       tooltip!.style.top = `${clientY}px`;
     });
 
-  const { columns: jsonFiles } = await d3.dsv(' ', 'json/jsonList.dsv');
+  const { columns: jsonFiles } = await d3.dsv(' ', 'jsonList.dsv');
 
   for (const file of jsonFiles) jsonData.push(
     await d3
-      .json(`json/${file}`)
+      .json(`${file}`)
       .then(data => {
         interactions.push((data as ProfilerLogs).numberOfInteractions);
 

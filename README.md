@@ -16,6 +16,8 @@ or
 
 To profile specific component trees, import the `AutomationProfiler` component from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile, similarly to how React's Profiler API works. It needs only one prop: `id: string`. Try to make the `id` short. This will help with readability on charts that display many renders.
 
+> **Note:** `AutomationProfiler` is TypeScript-compatible.
+
 You can wrap your whole application in your index file:
 
 ```tsx
@@ -44,8 +46,6 @@ export default () =>
 ```
 
 You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user experience flows.
-
-> **Note:** `AutomationProfiler` is TypeScript-compatible.
 
 > **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
@@ -107,11 +107,11 @@ There are a few prerequisites before you can start generating charts:
 After that, you can then call the `rap` command to generate charts:
 
 ```sh
-npx rap --page=http://localhost:8000/index.html --watch=src
+npx rap --page=http://localhost:8000/index.html --watch=dist
 ```
 
 #### `rap` options
 - `page` (required): the page that automation will be run on.
 - `skipMount` (optional): excludes the initial `mount` phase renders that happen before any automation flows are initialized.
 - `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.
-- `watch` (optional): rerun `rap` on any changes to the given folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow.
+- `watch` (optional): rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. **Note that `watch` should be watching a folder that contains the built code (ex: `dist`) and not a source folder (ex: `src`)**.

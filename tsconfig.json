@@ -11,6 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "outDir": "./lib",
+    "rootDir": "./src",
     "resolveJsonModule": true,
     "strict": true,
     "target": "ES5",

@@ -34,8 +34,7 @@ export default async (url: string, packagePath: string) => {
 
     await fs.writeFile(
       `${packagePath}/${fileName}`,
-      JSON.stringify({ logs, numberOfInteractions },
-      ), err => {
+      JSON.stringify({ logs, numberOfInteractions }), err => {
         if (err) throw err;
         console.log(`\n\x1b[37mReport written as file: \x1b[36m${fileName}\n`);
       });

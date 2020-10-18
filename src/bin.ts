@@ -2,7 +2,7 @@
 import { exec } from 'child_process';
 import express from 'express';
 import fs from 'fs';
-// import nodemon from 'nodemon';
+import nodemon from 'nodemon';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
@@ -10,8 +10,7 @@ import runAutomation from './automation.js';
 
 (async () => {
   const options = yargs
-    // .usage('Usage: --includeMount <includeMount> --page <page> --port <port> --watch <watch>')
-    .usage('Usage: --includeMount <includeMount> --page <page> --port <port>')
+    .usage('Usage: --includeMount <includeMount> --page <page> --port <port> --watch <watch>')
     .option('includeMount', {
       describe: 'includes the initial mount render',
       type: 'boolean',
@@ -25,19 +24,20 @@ import runAutomation from './automation.js';
       describe: 'port to be used for server',
       type: 'number',
     })
-    // .option('watch', {
-    //   describe: 'generate charts on every new build',
-    //   type: 'string',
-    // })
+    .option('watch', {
+      describe: 'generate charts on every new build',
+      type: 'string',
+    })
     .argv;
 
   const {
     includeMount = false,
     page,
     port = 1235,
-    // watch = '',
+    watch = '',
   } = options;
 
+  const cwd = path.resolve();
   const scriptPath = fileURLToPath(import.meta.url);
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;
@@ -90,18 +90,23 @@ import runAutomation from './automation.js';
     const app = express();
     app.use(express.static(packagePath));
     app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
-    app.listen(port, () => console.log(`automation charts displaying at ${url}`));
+    app.listen(port, () => console.log(`Automation charts displaying at ${url}`));
   };
 
-  // if (watch) {
-  //   nodemon({
-  //     script: 'app.js',
-  //     ext: 'js json'
-  //   });
-  // }
+  if (watch) {
+    nodemon({
+      script: `${packagePath}/watch.js`,
+      watch: [`${cwd}/${watch}/`],
+    });
+  }
 
   await deleteJsonFiles();
-  await runAutomation(page, packagePath, includeMount);
+  await runAutomation({
+    cwd,
+    includeMount,
+    packagePath,
+    url: page,
+  });
   await createJsonList();
   await startServer();
   await openPage();

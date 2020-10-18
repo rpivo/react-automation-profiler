@@ -1,12 +1,16 @@
 import fs from 'fs';
-import path from 'path';
 import puppeteer, { Page } from 'puppeteer';
 
 type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async (url: string, packagePath: string, includeMount: boolean) => {
+export default async ({ cwd, includeMount, packagePath, url }: {
+  cwd: string;
+  includeMount: boolean;
+  packagePath: string;
+  url: string;
+}) => {
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();
@@ -52,7 +56,6 @@ export default async (url: string, packagePath: string, includeMount: boolean) =
   };
 
   const runFlows = async () => {
-    const cwd = path.resolve();
     const file = await import(`${cwd}/react.automation.js`);
     const { default: flows } = file;
     for (const [flow, actions] of Object.entries(flows)) {

@@ -52,7 +52,6 @@ import runAutomation from './automation.js';
           return 'xdg-open';
       }
     };
-
     exec(`${startCommand()} ${url}`);
   };
 

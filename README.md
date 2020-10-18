@@ -105,10 +105,11 @@ There are a few prerequisites before you can start generating charts:
 After that, you can then call the `rap` command to generate charts:
 
 ```sh
-npx rap --page=http://localhost:8000/index.html --port=3000
+npx rap --page=http://localhost:8000/index.html -- watch
 ```
 
 #### `rap` options
 - `page` (required): the page that automation will be run on.
-- `includeMount` (optional): includes the initial `mount` phase renders that happen before any automation flows are initialized.
+- `skipMount` (optional): excludes the initial `mount` phase renders that happen before any automation flows are initialized.
 - `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.
+- `watch` (optional)

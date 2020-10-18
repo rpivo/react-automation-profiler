@@ -6,7 +6,9 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async (url: string, packagePath: string) => {
+export default async (url: string, packagePath: string, includeMount: boolean) => {
+  const MOUNT = 'Mount';
+
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
@@ -29,16 +31,17 @@ export default async (url: string, packagePath: string) => {
     label: string;
     numberOfInteractions?: number,
   }) => {
-    const logs = await page.evaluate(() => window.profiler);
-    const fileName = getFileName(label);
-
-    await fs.writeFile(
-      `${packagePath}/${fileName}`,
-      JSON.stringify({ logs, numberOfInteractions }), err => {
-        if (err) throw err;
-        console.log(`\n\x1b[37mReport written as file: \x1b[36m${fileName}\n`);
-      });
-
+    if (label !== MOUNT || (label === MOUNT && includeMount)) {
+      const logs = await page.evaluate(() => window.profiler);
+      const fileName = getFileName(label);
+  
+      await fs.writeFile(
+        `${packagePath}/${fileName}`,
+        JSON.stringify({ logs, numberOfInteractions }), err => {
+          if (err) throw err;
+          console.log(`\n\x1b[37mReport written as file: \x1b[36m${fileName}\n`);
+        });
+    }
     await page.evaluate(() => {
       window.profiler = [];
     });
@@ -67,7 +70,7 @@ export default async (url: string, packagePath: string) => {
     height: 1080,
     width: 1920,
   });
-  await collectLogs({ label: 'Mount' });
+  await collectLogs({ label: MOUNT });
   await runFlows();
   await browser.close();
 };

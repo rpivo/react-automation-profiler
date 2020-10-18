@@ -9,7 +9,7 @@ import runAutomation from './automation.js';
 
 (async () => {
   const options = yargs
-    .usage('Usage: --page <page> --port <port>')
+    .usage('Usage: --includeMount <includeMount> --page <page> --port <port>')
     .option('includeMount', {
       describe: 'includes the initial mount render',
       type: 'boolean',
@@ -85,7 +85,7 @@ import runAutomation from './automation.js';
   };
 
   await deleteJsonFiles();
-  await runAutomation(page, packagePath);
+  await runAutomation(page, packagePath, includeMount);
   await createJsonList();
   await startServer();
   await openPage();

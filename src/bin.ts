@@ -10,6 +10,10 @@ import runAutomation from './automation.js';
 (async () => {
   const options = yargs
     .usage('Usage: --page <page> --port <port>')
+    .option('includeMount', {
+      describe: 'includes the initial mount render',
+      type: 'boolean',
+    })
     .option('page', {
       describe: 'page to be tested',
       type: 'string',
@@ -22,9 +26,12 @@ import runAutomation from './automation.js';
     .argv;
 
   const {
+    includeMount = false,
     page,
     port = 1235,
   } = options;
+
+  console.log('includeMount: ', includeMount);
 
   const scriptPath = fileURLToPath(import.meta.url);
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;

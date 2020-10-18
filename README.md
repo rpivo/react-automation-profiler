@@ -45,7 +45,7 @@ export default () =>
 
 You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user experience flows.
 
-⚠️  **Note** ⚠️ `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
+> **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
 ### Automation Flows
 
@@ -93,6 +93,8 @@ Each flow has the shape `[key: string]: string[]`. Each key is a string that bri
 
 In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`. This represents what a user would do when toggling a PlayArea Card's active state.
 
+> **Note**: The automation flows will run one after another in the order they are listed in the automation file. No subsequent page loads happen between each flow.
+
 ### CLI: Generating Charts
 
 There are a few prerequisites before you can start generating charts:
@@ -108,4 +110,5 @@ npx rap --page=http://localhost:8000/index.html --port=3000
 
 #### `rap` options
 - `page` (required): the page that automation will be run on.
+- `includeMount` (optional): includes the initial `mount` phase renders that happen before any automation flows are initialized.
 - `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.

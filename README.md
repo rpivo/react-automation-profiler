@@ -93,7 +93,7 @@ Each flow has the shape `[key: string]: string[]`. Each key is a string that bri
 
 In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`. This represents what a user would do when toggling a PlayArea Card's active state.
 
-### Generating Charts
+### CLI: Generating Charts
 
 There are a few prerequisites before you can start generating charts:
 - `AutomationProfiler` must be wrapping at least one of your components.
@@ -106,6 +106,6 @@ After that, you can then call the `rap` command to generate charts:
 npx rap --page=http://localhost:8000/index.html --port=3000
 ```
 
-`rap` options:
+#### `rap` options
 - `page` (required): the page that automation will be run on.
 - `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.

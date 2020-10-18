@@ -87,7 +87,7 @@ In this file, export a default object containing keys that represent each of you
 There are currently three **action types** that can be used in **react.automation.js**:
 - `'click'`
 - '`focus`'
-- '`hover`'
+- `'hover'`
 
 Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
 
@@ -103,7 +103,7 @@ There are a few prerequisites before you can start generating charts:
 After that, you can then call the `rap` command to generate charts:
 
 ```sh
-rap --page=http://localhost:8000/index.html --port=3000
+npx rap --page=http://localhost:8000/index.html --port=3000
 ```
 
 `rap` options:

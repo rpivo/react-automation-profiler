@@ -48,9 +48,10 @@ import runAutomation from './automation.js';
     await fs.readdir(packagePath, (err, files) => {
       if (err) throw err;
       for (const file of files) {
-        if (file.includes('.json')) fs.unlink(path.join(packagePath, file), err => {
-          if (err) throw err;
-        });
+        if (file.includes('.json') || file.includes('.dsv'))
+          fs.unlink(path.join(packagePath, file), err => {
+            if (err) throw err;
+          });
       }
     });
   };

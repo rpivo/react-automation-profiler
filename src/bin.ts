@@ -44,17 +44,20 @@ import runAutomation from './automation.js';
 
   const createJsonList = async () => {
     const jsonList: string[] = [];
+    const jsonListPath = `${packagePath}/jsonList.dsv`;
+
+    if (fs.existsSync(jsonListPath)) await fs.unlink(jsonListPath, err => {
+      if (err) throw err;
+    });
+
     await fs.readdir(packagePath, async (err, files) => {
       if (err) throw err;
       for (const file of files) {
         if (file.includes('.json')) jsonList.push(file);
-        if (file.includes('.dsv')) fs.unlink(path.join(packagePath, file), err => {
-          if (err) throw err;
-        });
       }
-    });
-    await fs.writeFile(`${packagePath}/jsonList.dsv`, jsonList.join(' '),  err => {
-      if (err) throw err;
+      await fs.writeFile(jsonListPath, jsonList.join(' '),  err => {
+        if (err) throw err;
+      });
     });
   };
 

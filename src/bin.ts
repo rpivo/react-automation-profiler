@@ -95,8 +95,10 @@ import runAutomation from './automation.js';
 
   if (watch) {
     nodemon({
+      delay: 15000,
+      ext: 'js,jsx,ts,tsx',
       script: `${packagePath}/watch.js`,
-      watch: [`${cwd}/${watch}/`],
+      watch: [`${cwd}/${watch}`],
     });
     nodemon.on('quit', () => process.exit());
   }

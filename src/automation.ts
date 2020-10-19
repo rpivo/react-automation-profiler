@@ -1,3 +1,5 @@
+import { exec } from 'child_process';
+import express from 'express';
 import fs from 'fs';
 import puppeteer, { Page } from 'puppeteer';
 
@@ -6,12 +8,15 @@ type StringIndexablePage = Page & {
 };
 
 export default async () => {
+  console.log('hello from automation');
   const MOUNT = 'Mount';
 
   const {
     cwd,
     includeMount,
     packagePath,
+    port,
+    serverPath,
     url,
   } = global.automation;
 
@@ -53,8 +58,41 @@ export default async () => {
     });
   };
 
+  const createJsonList = async () => {
+    const jsonList: string[] = [];
+    const jsonListPath = `${packagePath}/jsonList.dsv`;
+
+    if (fs.existsSync(jsonListPath)) await fs.unlink(jsonListPath, err => {
+      if (err) throw err;
+    });
+
+    await fs.readdir(packagePath, async (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        if (file.includes('.json')) jsonList.push(file);
+      }
+      await fs.writeFile(jsonListPath, jsonList.join(' '),  err => {
+        if (err) throw err;
+      });
+    });
+  };
+
   const handleActions = async (actions: string[]) => {
     for (let i = 0; i < actions.length; i += 2) await page[actions[i]](actions[i + 1]);
+  };
+
+  const openPage = () => {
+    const startCommand = () => {
+      switch (process.platform) {
+        case 'darwin':
+          return 'open';
+        case 'win32':
+          return 'start';
+        default:
+          return 'xdg-open';
+      }
+    };
+    exec(`${startCommand()} ${serverPath}`);
   };
 
   const runFlows = async () => {
@@ -69,6 +107,13 @@ export default async () => {
     }
   };
 
+  const startServer = async () => {
+    const app = express();
+    app.use(express.static(packagePath));
+    app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
+    app.listen(port, () => console.log(`Automation charts displaying at ${serverPath}`));
+  };
+
   await page.goto(url);
   await page.setViewport({
     deviceScaleFactor: 1,
@@ -78,4 +123,7 @@ export default async () => {
   await collectLogs({ label: MOUNT });
   await runFlows();
   await browser.close();
+  await createJsonList();
+  await startServer();
+  await openPage();
 };

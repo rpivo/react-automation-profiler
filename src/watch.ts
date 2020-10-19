@@ -1,1 +1,3 @@
-console.log('hello');
+import runAutomation from './automation.js';
+
+runAutomation();

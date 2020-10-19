@@ -10,6 +10,17 @@ declare global {
       startTime: number;
     }[];
   }
+
+  type AutomationProps = {
+    cwd: string;
+    includeMount: boolean;
+    packagePath: string;
+    port: number;
+    serverPath: string;
+    url: string;
+  } & {
+    [key: string]: boolean | number | string;
+  };
 }
 
 export {};

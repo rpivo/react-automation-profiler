@@ -111,12 +111,7 @@ import runAutomation from './automation.js';
   }
 
   await deleteJsonFiles();
-  await runAutomation({
-    cwd,
-    includeMount,
-    packagePath,
-    url: page,
-  });
+  await runAutomation();
   await createJsonList();
   await startServer();
   await openPage();

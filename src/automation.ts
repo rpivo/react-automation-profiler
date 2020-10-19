@@ -5,14 +5,15 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async ({ cwd, includeMount, packagePath, url }: {
-  cwd: string;
-  includeMount: boolean;
-  packagePath: string;
-  url: string;
-}) => {
-  console.log('automation', global.automation);
+export default async () => {
   const MOUNT = 'Mount';
+
+  const {
+    cwd,
+    includeMount,
+    packagePath,
+    url,
+  } = global.automation;
 
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;

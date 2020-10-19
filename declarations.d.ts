@@ -8,6 +8,7 @@ declare global {
         port: number;
         serverPath: string;
         url: string;
+        watch: string;
       };
     }
   }

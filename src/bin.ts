@@ -47,6 +47,7 @@ import runAutomation from './automation.js';
     port,
     serverPath,
     url: page,
+    watch,
   };
 
   const deleteJsonFiles = async () => {
@@ -67,7 +68,7 @@ import runAutomation from './automation.js';
     nodemon({
       delay: 15000,
       ext: 'js,jsx,ts,tsx',
-      script: `${packagePath}/watch.js`,
+      script: `${packagePath}/automation.js`,
       watch: [`${cwd}/${watch}`],
     });
     nodemon.on('quit', () => process.exit());

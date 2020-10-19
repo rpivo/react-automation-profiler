@@ -7,18 +7,19 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async () => {
+const {
+  cwd,
+  includeMount,
+  packagePath,
+  port,
+  serverPath,
+  url,
+  watch,
+} = global.automation;
+
+const runAutomation = async () => {
   console.log('hello from automation');
   const MOUNT = 'Mount';
-
-  const {
-    cwd,
-    includeMount,
-    packagePath,
-    port,
-    serverPath,
-    url,
-  } = global.automation;
 
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
@@ -127,3 +128,7 @@ export default async () => {
   await startServer();
   await openPage();
 };
+
+if (watch) runAutomation();
+
+export default runAutomation;

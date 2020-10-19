@@ -40,14 +40,13 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const serverPath = `http://localhost:${port}`;
 
-  global.automation = {
+  const automationOptions = {
     cwd,
     includeMount,
     packagePath,
     port,
     serverPath,
     url: page,
-    watch,
   };
 
   const deleteJsonFiles = async () => {
@@ -64,8 +63,13 @@ import runAutomation from './automation.js';
   await deleteJsonFiles();
 
   if (watch) {
-    console.log('watch mode');
+    const optionsArray = [];
+
+    for (const [key, value] of Object.entries(automationOptions))
+      optionsArray.push(`${key}=${value}`);
+
     nodemon({
+      args: optionsArray,
       delay: 15000,
       ext: 'js,jsx,ts,tsx',
       script: `${packagePath}/automation.js`,
@@ -74,6 +78,6 @@ import runAutomation from './automation.js';
     nodemon.on('quit', () => process.exit());
   } else {
     console.log('running automation once');
-    await runAutomation();
+    await runAutomation(automationOptions);
   }
 })();

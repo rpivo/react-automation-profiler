@@ -1,17 +1,4 @@
 declare global {
-  namespace NodeJS {
-    interface Global {
-      automation: {
-        cwd: string;
-        includeMount: boolean;
-        packagePath: string;
-        port: number;
-        serverPath: string;
-        url: string;
-        watch: string;
-      };
-    }
-  }
   interface Window {
     profiler: {
       actualDuration: number;

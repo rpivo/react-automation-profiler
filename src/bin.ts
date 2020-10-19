@@ -72,7 +72,7 @@ import runAutomation from './automation.js';
       args: optionsArray,
       delay: 15000,
       ext: 'js,jsx,ts,tsx',
-      script: `${packagePath}/automation.js`,
+      script: `${packagePath}/watch.js`,
       watch: [`${cwd}/${watch}`],
     });
     nodemon.on('quit', () => process.exit());

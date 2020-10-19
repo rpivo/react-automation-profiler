@@ -12,7 +12,7 @@ const options: AutomationProps = {
 };
 
 for (const str of stringArray) {
-  let [key, value] = str.split('=');
+  const [key, value] = str.split('=');
   switch (key) {
     case 'includeMount':
       options[key] = value === 'true' ? true : false;
@@ -23,8 +23,6 @@ for (const str of stringArray) {
     default:
       options[key] = value;
   }
-  if (key === 'includeMount') options[key] = !!value;
-  options[key] = value;
 }
 
 runAutomation(options);

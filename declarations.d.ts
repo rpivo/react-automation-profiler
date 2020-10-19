@@ -1,4 +1,14 @@
 declare global {
+  namespace NodeJS {
+    interface Global {
+      automation: {
+        cwd: string;
+        includeMount: boolean;
+        packagePath: string;
+        url: string;
+      };
+    }
+  }
   interface Window {
     profiler: {
       actualDuration: number;

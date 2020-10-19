@@ -42,6 +42,13 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const url = `http://localhost:${port}`;
 
+  global.automation = {
+    cwd,
+    includeMount,
+    packagePath,
+    url: page,
+  };
+
   const createJsonList = async () => {
     const jsonList: string[] = [];
     const jsonListPath = `${packagePath}/jsonList.dsv`;

@@ -11,6 +11,7 @@ export default async ({ cwd, includeMount, packagePath, url }: {
   packagePath: string;
   url: string;
 }) => {
+  console.log('automation', global.automation);
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();

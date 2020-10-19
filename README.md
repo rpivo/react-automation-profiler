@@ -3,8 +3,8 @@
 Analyze your React app's renders with automated user flows that generate comparison charts. Run flows before and after major changes to see how it affects components and renders, or run them on every build.
 
 ### Contents
-[Install](#Install)<br/>
-[Setup](#Setup)
+- [Install](#Install)
+- [Setup](#Setup)
 
 ## Install
 

@@ -13,7 +13,7 @@ export default async ({
   port,
   serverPath,
   url,
-}: AutomationProps) => {
+}: AutomationProps, isServerReady: boolean) => {
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();
@@ -106,5 +106,5 @@ export default async ({
   await runFlows();
   await browser.close();
   await createJsonList();
-  await startServer();
+  if (!isServerReady) await startServer();
 };

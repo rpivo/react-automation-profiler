@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import browserSync from 'browser-sync';
+import { spawn } from 'child_process';
 import fs from 'fs';
-import nodemon from 'nodemon';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
@@ -41,7 +41,7 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const serverPath = `http://localhost:${port}`;
 
-  let isProxyReady = false;
+  let isServerReady = false;
 
   const automationOptions = {
     cwd,
@@ -76,28 +76,28 @@ import runAutomation from './automation.js';
   await deleteJsonFiles();
 
   if (watch) {
-    const optionsArray = [];
+    const nodemon = spawn('npx', [
+      'nodemon',
+      '--delay', '10000ms',
+      '--ext', 'js,ts,jsx,tsx',
+      '--on-change-only',
+      '--watch', `${cwd}/${watch}`,
+      `${packagePath}/watch.js`,
+    ],  { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], });
 
-    for (const [key, value] of Object.entries(automationOptions))
-      optionsArray.push(`${key}=${value}`);
-
-    await nodemon({
-      args: optionsArray,
-      delay: 10000,
-      ext: 'js,jsx,ts,tsx',
-      script: `${packagePath}/watch.js`,
-      watch: [`${cwd}/${watch}`],
+    nodemon.on('message', async (event: Event) => {
+      if (event.type === 'exit') {
+        await runAutomation(automationOptions, isServerReady);
+        if (!isServerReady) {
+          setupProxy();
+          isServerReady = true;
+        } else {
+          browserSync.reload();
+        }
+      };
     });
-
-    nodemon.on('exit', () => setTimeout(() => browserSync.reload(), 1000));
-    nodemon.on('start', () => setTimeout(() => {
-      if (!isProxyReady) {
-        setupProxy();
-        isProxyReady = true;
-      }
-    }, 1000));
     nodemon.on('quit', () => process.exit());
   } else {
-    await runAutomation(automationOptions);
+    await runAutomation(automationOptions, isServerReady);
   }
 })();

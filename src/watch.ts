@@ -1,1 +1,1 @@
-console.log('preparing automation...');
+console.log('\npreparing automation...\n');

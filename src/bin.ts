@@ -81,6 +81,7 @@ import runAutomation from './automation.js';
       '--delay', '10000ms',
       '--ext', 'js,ts,jsx,tsx',
       '--on-change-only',
+      '--quiet',
       '--watch', `${cwd}/${watch}`,
       `${packagePath}/watch.js`,
     ],  { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], });

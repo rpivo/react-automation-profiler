@@ -1,4 +1,3 @@
-import { exec } from 'child_process';
 import express from 'express';
 import fs from 'fs';
 import puppeteer, { Page } from 'puppeteer';
@@ -78,20 +77,6 @@ export default async ({
     for (let i = 0; i < actions.length; i += 2) await page[actions[i]](actions[i + 1]);
   };
 
-  const openPage = () => {
-    const startCommand = () => {
-      switch (process.platform) {
-        case 'darwin':
-          return 'open';
-        case 'win32':
-          return 'start';
-        default:
-          return 'xdg-open';
-      }
-    };
-    exec(`${startCommand()} ${serverPath}`);
-  };
-
   const runFlows = async () => {
     const file = await import(`${cwd}/react.automation.js`);
     const { default: flows } = file;
@@ -122,5 +107,4 @@ export default async ({
   await browser.close();
   await createJsonList();
   await startServer();
-  await openPage();
 };

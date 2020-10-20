@@ -41,11 +41,13 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const serverPath = `http://localhost:${port}`;
 
+  let isProxyReady = false;
+
   const automationOptions = {
     cwd,
     includeMount,
     packagePath,
-    port,
+    port: port,
     serverPath,
     url: page,
   };
@@ -61,6 +63,16 @@ import runAutomation from './automation.js';
     });
   };
 
+  const setupProxy = () => browserSync.init({
+    browser: 'google chrome',
+    logLevel: 'silent',
+    notify: false,
+    open: true,
+    port: port + 1,
+    proxy: serverPath,
+    reloadOnRestart: true,
+  });
+
   await deleteJsonFiles();
 
   if (watch) {
@@ -69,23 +81,23 @@ import runAutomation from './automation.js';
     for (const [key, value] of Object.entries(automationOptions))
       optionsArray.push(`${key}=${value}`);
 
-    nodemon({
+    await nodemon({
       args: optionsArray,
-      delay: 15000,
+      delay: 10000,
       ext: 'js,jsx,ts,tsx',
       script: `${packagePath}/watch.js`,
       watch: [`${cwd}/${watch}`],
     });
+
+    nodemon.on('exit', () => setTimeout(() => browserSync.reload(), 1000));
+    nodemon.on('start', () => setTimeout(() => {
+      if (!isProxyReady) {
+        setupProxy();
+        isProxyReady = true;
+      }
+    }, 1000));
     nodemon.on('quit', () => process.exit());
   } else {
     await runAutomation(automationOptions);
   }
-
-  browserSync.init({
-    browser: 'google chrome',
-    port: port + 1,
-    proxy: `http://localhost:${port}`,
-    reloadDelay: 15000,
-    reloadOnRestart: true,
-  });
 })();

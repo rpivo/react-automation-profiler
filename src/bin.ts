@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import browserSync from 'browser-sync';
 import fs from 'fs';
 import nodemon from 'nodemon';
 import path from 'path';
@@ -79,4 +80,12 @@ import runAutomation from './automation.js';
   } else {
     await runAutomation(automationOptions);
   }
+
+  browserSync.init({
+    browser: 'google chrome',
+    port: port + 1,
+    proxy: `http://localhost:${port}`,
+    reloadDelay: 15000,
+    reloadOnRestart: true,
+  });
 })();

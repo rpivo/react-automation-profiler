@@ -162,13 +162,13 @@ const {
 
     const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;
 
-    if (data.length >= 40) {
-      width = 3000;
-      if (bodyWidth < 3600) bodyWidth = 3600;
-    } else if (data.length >= 30 && data.length < 40) {
-      width = 2000;
-      if (bodyWidth < 2600) bodyWidth = 2600;
-    } else width = 1000;
+    if (data.length >= 30) {
+      width = (~~(data.length / 10) * 1000) - 1000;
+      const potentialBodyWidth = width + 600;
+      if (bodyWidth < potentialBodyWidth) bodyWidth = potentialBodyWidth;
+    } else {
+      width = 1000;
+    }
 
     svgEl.setAttribute('width', `${width}`);
 

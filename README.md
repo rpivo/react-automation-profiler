@@ -55,10 +55,7 @@ You can wrap as many components and at as many levels as you want. `react-automa
 
 ### Automation Flows
 
-You can define your automation flows in a file at the root of your repo using one of these names (in order of precedence):
-- **react.automation.js**
-- **automation.js**
-- **flows.js**
+You can define your automation flows in a file at the root of your repo using one of the name **react.automation.js**.
 
 Here's an example **react.automation.js** file:
 

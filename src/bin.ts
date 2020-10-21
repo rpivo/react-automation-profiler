@@ -46,6 +46,7 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const serverPath = `http://localhost:${port + 1}`;
 
+  let versionCount = 0;
   let isServerReady = false;
 
   const automationOptions = {
@@ -100,7 +101,9 @@ import runAutomation from './automation.js';
         } else {
           browserSync.reload();
         }
-        console.log(`📡  displaying charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
+        console.log(`📡  displaying ${
+            versionCount++ ? `${versionCount} versions of `: ''
+          }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
         `);
       };
     });

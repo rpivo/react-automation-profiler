@@ -46,7 +46,6 @@ export default async ({
         `${packagePath}/${fileName}`,
         JSON.stringify({ logs, numberOfInteractions }), err => {
           if (err) throw err;
-          console.log(`\n\x1b[37mReport written as file: \x1b[36m${fileName}\n`);
         });
     }
     await page.evaluate(() => {
@@ -93,7 +92,7 @@ export default async ({
     const app = express();
     app.use(express.static(packagePath));
     app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
-    app.listen(port, () => console.log(`Automation charts displaying at ${serverPath}`));
+    app.listen(port);
   };
 
   await page.goto(url);

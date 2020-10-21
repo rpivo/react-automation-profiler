@@ -8,6 +8,11 @@ import yargs from 'yargs';
 import runAutomation from './automation.js';
 
 (async () => {
+  console.log(`
+  █▀█ ▄▀█ █▀█
+  █▀▄ █▀█ █▀▀ \x1b[1;32mreact automation profiler\x1b[37m
+  `);
+
   const options = yargs
     .usage('Usage: --includeMount <includeMount> --page <page> --port <port> --watch <watch>')
     .option('includeMount', {
@@ -95,6 +100,8 @@ import runAutomation from './automation.js';
         } else {
           browserSync.reload();
         }
+        console.log(`📡  displaying charts at: \x1b[1;32m${serverPath}\x1b[37m
+        `);
       };
     });
     nodemon.on('quit', () => process.exit());

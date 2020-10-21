@@ -21,8 +21,6 @@ or
 
 To profile specific component trees, import the `AutomationProfiler` component from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile, similarly to how React's Profiler API works. It needs only one prop: `id: string`. Try to make the `id` short. This will help with readability on charts that display many renders.
 
-> **Note:** `AutomationProfiler` is TypeScript-compatible.
-
 You can wrap your whole application in your index file:
 
 ```tsx

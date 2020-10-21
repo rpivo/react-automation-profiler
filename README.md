@@ -4,7 +4,10 @@ Analyze your React app's renders with automated user flows that generate compari
 
 ### Contents
 - [Install](#Install)
-- [Setup](#Setup)
+- [Wrapping Components to Be Profiled With AutomationProfiler](#Wrapping Components to Be Profiled With AutomationProfiler)
+- [Automation Flows](#Automation Flows)
+- [CLI: Generating Charts](#CLI: Generating Charts)
+- [`rap` options](#`rap` options)
 
 ## Install
 
@@ -14,9 +17,7 @@ or
 
 `yarn add react-automation-profiler --dev`
 
-## Setup
-
-### Wrapping Components to Be Profiled With AutomationProfiler
+## Wrapping Components to Be Profiled With AutomationProfiler
 
 To profile specific component trees, import the `AutomationProfiler` component from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile, similarly to how React's Profiler API works. It needs only one prop: `id: string`. Try to make the `id` short. This will help with readability on charts that display many renders.
 
@@ -53,7 +54,7 @@ You can wrap as many components and at as many levels as you want. `react-automa
 
 > **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
-### Automation Flows
+## Automation Flows
 
 You can define your automation flows in a file at the root of your repo using one of the name **react.automation.js**.
 
@@ -98,7 +99,7 @@ In the example above, the first flow `'Toggle PlayArea Card Active'` has two act
 
 > **Note**: The automation flows will run one after another in the order they are listed in the automation file. No subsequent page loads happen between each flow.
 
-### CLI: Generating Charts
+## CLI: Generating Charts
 
 There are a few prerequisites before you can start generating charts:
 - `AutomationProfiler` must be wrapping at least one of your components.
@@ -111,8 +112,19 @@ After that, you can then call the `rap` command to generate charts:
 npx rap --page=http://localhost:8000/index.html --watch=src
 ```
 
-#### `rap` options
-- `page` (required): the page that automation will be run on.
-- `skipMount` (optional): excludes the initial `mount` phase renders that happen before any automation flows are initialized.
-- `port` (optional): the port that charts will be displayed on. This will default to port `1235`, but can be manually set in case `1235` is already in use.
-- `watch` (optional): rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. **Note**: `watch` runs on a 15-second delay to allow the application's local development server to finish building before re-running the automation against the new build.
+## `rap` options
+
+#### `changeInterval`: number
+(optional): rerun after n number of changes. Note that there is a cooldown of 10 seconds before another change is counted. Defaults to `1`.
+
+#### `page`: string
+(required): the page that automation will be run on.
+
+#### `includeMount`: boolean
+(optional): includes the initial `mount` phase renders that happen before any automation flows are initialized. Defaults to `false`.
+
+#### `port`: number
+(optional): the port that charts will be displayed on. Defaults to `1235`.
+
+#### `watch`: string
+(optional): rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. **Note**: `watch` runs on a 15-second delay to allow the application's local development server to finish building before re-running the automation against the new build.

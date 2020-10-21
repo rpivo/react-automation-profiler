@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --no-warnings
 import browserSync from 'browser-sync';
 import { spawn } from 'child_process';
 import fs from 'fs';
@@ -14,7 +14,12 @@ import runAutomation from './automation.js';
   `);
 
   const options = yargs
-    .usage('Usage: --includeMount <includeMount> --page <page> --port <port> --watch <watch>')
+    .usage(`Usage: --changeInterval <changeInterval> --includeMount <includeMount> --page <page> \
+      --port <port> --watch <watch>`)
+    .option('changeInterval', {
+      describe: 'number of changes before automation is rerun',
+      type: 'number',
+    })
     .option('includeMount', {
       describe: 'includes the initial mount render',
       type: 'boolean',
@@ -35,6 +40,7 @@ import runAutomation from './automation.js';
     .argv;
 
   const {
+    changeInterval = 1,
     includeMount = false,
     page,
     port = 1235,
@@ -46,6 +52,7 @@ import runAutomation from './automation.js';
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const serverPath = `http://localhost:${port + 1}`;
 
+  let changeCount = 0;
   let versionCount = 0;
   let isServerReady = false;
 
@@ -90,17 +97,22 @@ import runAutomation from './automation.js';
       '--quiet',
       '--watch', `${cwd}/${watch}`,
       `${packagePath}/watch.js`,
-    ],  { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], });
+    ],  { stdio: ['pipe', 'pipe', 'pipe', 'ipc'], });
 
     nodemon.on('message', async (event: Event) => {
-      if (event.type === 'exit') {
+      if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
+        console.log('\n🛠  preparing automation...\n');
+
         await runAutomation(automationOptions, isServerReady);
+        changeCount = 0;
+
         if (!isServerReady) {
           setupProxy();
           isServerReady = true;
         } else {
           browserSync.reload();
         }
+
         console.log(`📡  displaying ${
             versionCount++ ? `${versionCount} versions of `: ''
           }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m

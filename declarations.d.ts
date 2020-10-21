@@ -15,8 +15,7 @@ declare global {
     cwd: string;
     includeMount: boolean;
     packagePath: string;
-    port: number;
-    serverPath: string;
+    serverPort: number;
     url: string;
   } & {
     [key: string]: boolean | number | string;

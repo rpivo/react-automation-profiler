@@ -10,8 +10,7 @@ export default async ({
   cwd,
   includeMount,
   packagePath,
-  port,
-  serverPath,
+  serverPort,
   url,
 }: AutomationProps, isServerReady: boolean) => {
   const MOUNT = 'Mount';
@@ -92,7 +91,7 @@ export default async ({
     const app = express();
     app.use(express.static(packagePath));
     app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
-    app.listen(port);
+    app.listen(serverPort);
   };
 
   await page.goto(url);

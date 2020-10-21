@@ -44,7 +44,7 @@ import runAutomation from './automation.js';
   const cwd = path.resolve();
   const scriptPath = fileURLToPath(import.meta.url);
   const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
-  const serverPath = `http://localhost:${port}`;
+  const serverPath = `http://localhost:${port + 1}`;
 
   let isServerReady = false;
 
@@ -52,7 +52,7 @@ import runAutomation from './automation.js';
     cwd,
     includeMount,
     packagePath,
-    port: port,
+    serverPort: port + 1,
     serverPath,
     url: page,
   };
@@ -73,7 +73,7 @@ import runAutomation from './automation.js';
     logLevel: 'silent',
     notify: false,
     open: true,
-    port: port + 1,
+    port,
     proxy: serverPath,
     reloadOnRestart: true,
   });
@@ -100,7 +100,7 @@ import runAutomation from './automation.js';
         } else {
           browserSync.reload();
         }
-        console.log(`📡  displaying charts at: \x1b[1;32m${serverPath}\x1b[37m
+        console.log(`📡  displaying charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
         `);
       };
     });

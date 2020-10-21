@@ -40,16 +40,20 @@ export default async ({
     if (label !== MOUNT || (label === MOUNT && includeMount)) {
       const logs = await page.evaluate(() => window.profiler);
       const fileName = getFileName(label);
+
+      if (logs.length === 0) return false;
   
       await fs.writeFile(
         `${packagePath}/${fileName}`,
         JSON.stringify({ logs, numberOfInteractions }), err => {
           if (err) throw err;
-        });
+        },
+      );
     }
     await page.evaluate(() => {
       window.profiler = [];
     });
+    return true;
   };
 
   const createJsonList = async () => {
@@ -78,12 +82,15 @@ export default async ({
   const runFlows = async () => {
     const file = await import(`${cwd}/react.automation.js`);
     const { default: flows } = file;
-    for (const [flow, actions] of Object.entries(flows)) {
-      await handleActions(actions as string[])
-        .then(() => collectLogs({
-          label: flow,
-          numberOfInteractions: (actions as string[]).length / 2,
-        }));
+    const keys = Object.keys(flows);
+
+    for (let i = 0; i < keys.length; i++) {
+      await handleActions(flows[keys[i]]);
+      const success = await collectLogs({
+        label: keys[i],
+        numberOfInteractions: flows[keys[i]].length / 2,
+      });
+      if (!success) i -= 1;
     }
   };
 

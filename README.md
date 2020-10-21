@@ -48,13 +48,13 @@ export default () =>
   </AutomationProfiler>;
 ```
 
-You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user experience flows.
+You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user flows.
 
 > **Note**: `AutomationProfiler` is meant to be used only when profiling components. You should not use it in production.
 
 ## Automation Flows
 
-You can define your automation flows in a file at the root of your repo using one of the name **react.automation.js**.
+You can define your automation flows in a file at the root of your repo using the name **react.automation.js**.
 
 Here's an example **react.automation.js** file:
 

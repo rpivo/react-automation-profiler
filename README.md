@@ -112,17 +112,10 @@ npx rap --page=http://localhost:8000/index.html --watch=src
 
 ## `rap` options
 
-#### `changeInterval`: number
-(optional): rerun after n number of changes. Note that there is a cooldown of 10 seconds before another change is counted. Defaults to `1`.
-
-#### `page`: string
-(required): the page that automation will be run on.
-
-#### `includeMount`: boolean
-(optional): includes the initial `mount` phase renders that happen before any automation flows are initialized. Defaults to `false`.
-
-#### `port`: number
-(optional): the port that charts will be displayed on. Defaults to `1235`.
-
-#### `watch`: string
-(optional): rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. **Note**: `watch` runs on a 15-second delay to allow the application's local development server to finish building before re-running the automation against the new build.
+| option         | type    | required | default | description                                                                                                                                                                                                                                                                                                                                                                    |
+|----------------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| page           | string  | yes      |         | the page that automation will be run on.                                                                                                                                                                                                                                                                                                                                       |
+| changeInterval | number  | no       | 1       | rerun after n number of changes. Note that there is a cooldown of 10 seconds before another change is counted. Note that this flag effectively does nothing without use of the `watch` flag.                                                                                                                                                                                   |
+| includeMount   | boolean | no       | false   | includes the initial `mount` phase renders that happen before any automation flows are initialized.                                                                                                                                                                                                                                                                            |
+| port           | number  | no       | 1235    | the port that charts will be displayed on.                                                                                                                                                                                                                                                                                                                                     |
+| watch          | string  | no       |         | rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. Note that `watch` runs on a 10-second delay to allow the application's local development server to finish building before re-running the automation against the new build. |

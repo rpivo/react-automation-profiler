@@ -6,7 +6,7 @@ Analyze your React app's renders with automated user flows that generate compari
 - [Install](#Install)
 - [Wrapping Components With AutomationProfiler](#Wrapping-Components-With-AutomationProfiler)
 - [Automation Flows](#Automation-Flows)
-- [CLI: Generating Charts](#CLI:-Generating-Charts)
+- [CLI: Generating Charts](#CLI-Generating-Charts)
 - [`rap` options](#`rap`-options)
 
 ## Install

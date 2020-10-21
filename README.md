@@ -4,10 +4,10 @@ Analyze your React app's renders with automated user flows that generate compari
 
 ### Contents
 - [Install](#Install)
-- [Wrapping Components to Be Profiled With AutomationProfiler](#Wrapping Components to Be Profiled With AutomationProfiler)
-- [Automation Flows](#Automation Flows)
-- [CLI: Generating Charts](#CLI: Generating Charts)
-- [`rap` options](#`rap` options)
+- [Wrapping Components With AutomationProfiler](#Wrapping-Components-With-AutomationProfiler)
+- [Automation Flows](#Automation-Flows)
+- [CLI: Generating Charts](#CLI:-Generating-Charts)
+- [`rap` options](#`rap`-options)
 
 ## Install
 
@@ -17,7 +17,7 @@ or
 
 `yarn add react-automation-profiler --dev`
 
-## Wrapping Components to Be Profiled With AutomationProfiler
+## Wrapping Components With AutomationProfiler
 
 To profile specific component trees, import the `AutomationProfiler` component from `react-automation-profiler`. `AutomationProfiler` can wrap any component that you want to profile, similarly to how React's Profiler API works. It needs only one prop: `id: string`. Try to make the `id` short. This will help with readability on charts that display many renders.
 

@@ -44,7 +44,7 @@ import React from 'react';
 
 export default () =>
   <AutomationProfiler id='p-card'>
-    <DeeplyNestedComponent someProp={someValue} />
+    <DeeplyNestedComponent />
   </AutomationProfiler>;
 ```
 

@@ -1,4 +1,14 @@
 import * as d3 from 'd3';
+import {
+  createCarousel,
+  createSVG,
+  handleMouseOut,
+  handleMouseOver,
+  MouseEventSelectors,
+  MouseMoveEvent,
+  ParagraphMap,
+  updateTooltipPosition,
+} from './charts.util';
 
 type Columns = {
   columns: ['Render', typeof ACTUAL_DURATION, typeof BASE_DURATION];
@@ -17,36 +27,12 @@ type Item = {
   startTime: number;
 };
 
-type MouseMoveEvent = {
-  target: {
-    style: {
-      outline: string;
-    }
-  } & {
-    ['__data__']: {
-      key: keyof ParagraphMap,
-      value: string;
-    };
-  }
-};
-
-type ParagraphString =
-  | 'Actual Duration'
-  | 'Base Duration'
-  | 'Number of Interactions'
-  | 'Total Automation Time Elapsed';
-
 type ProfilerLogs = {
   logs: Item[];
   numberOfInteractions: number;
 };
 
-enum ParagraphMap {
-  ACTUAL_DURATION = 'Actual Duration',
-  BASE_DURATION = 'Base Duration',
-  NUMBER_OF_INTERACTIONS = 'Number of Interactions',
-  TOTAL_AUTOMATION_TIME_ELAPSED = 'Total Automation Time Elapsed',
-}
+const { INTERACTIONS, RECT, TOTAL } = MouseEventSelectors;
 
 const {
   ACTUAL_DURATION,
@@ -66,40 +52,13 @@ const {
     top: 10,
   });
 
+  const carouselIds = [];
   const fileNames = [];
   const interactions: number[] = [];
   const jsonData = [];
   const allJsonValues: number[] = [];
 
-  const paragraphs: { [key in ParagraphMap]?: string } = {
-    [ACTUAL_DURATION]:
-      ` Time spent rendering the Profiler and its descendants for the current update. This 
-        indicates how well the subtree makes use of memoization (e.g. React.memo, useMemo, 
-        shouldComponentUpdate). Ideally this value should decrease significantly after the initial 
-        mount as many of the descendants will only need to re-render if their specific props 
-        change.`,
-    [BASE_DURATION]:
-      ` Duration of the most recent render time for each individual component within the Profiler 
-        tree. This value estimates a worst-case cost of rendering (e.g. the initial mount or a tree
-        with no memoization).`,
-    [NUMBER_OF_INTERACTIONS]: `The total number of page interactions that occurred during the 
-      automation flow.`,
-    [TOTAL_AUTOMATION_TIME_ELAPSED]:
-      ` The total time that elapsed during the automation flow. This does not indicate the total 
-        render time, but rather the total time it took for the automation to complete its flow.`,
-  };
-
-  d3.select('html')
-    .on('mousemove', e => {
-      const windowWidth = window.innerWidth;
-      const tooltip = document.getElementById('big-tooltip');
-      const { clientX, clientY }: { clientX: number; clientY: number } = e as MouseEvent;
-      const rightBuffer = windowWidth - 350;
-
-      tooltip!.style.left =
-        `${clientX > rightBuffer ? clientX - (clientX - rightBuffer) : clientX}px`;
-      tooltip!.style.top = `${clientY}px`;
-    });
+  d3.select('html').on('mousemove', e => updateTooltipPosition(e as MouseEvent));
 
   const { columns: jsonFiles } = await d3.dsv(' ', 'jsonList.dsv');
 
@@ -132,28 +91,25 @@ const {
   const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
   for (const [id, file] of jsonFiles.entries()) {
-    const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const [carouselId] = file.split('-');
+    carouselIds.push(carouselId);
+    let carouselEl = document.getElementById(carouselId);
 
-    svgEl.setAttribute('id', `chart-${id}`);
-    svgEl.setAttribute('height', '575');
+    if (!carouselEl) {
+      carouselEl = createCarousel(carouselId);
+      document.body.appendChild(carouselEl);
+    }
+
+    const svgEl = createSVG(id);
 
     const h2El = document.createElement('h2');
     let innerText = file.split('-')[0].replace(/([^A-Z])([A-Z])/g, '$1 $2');
     innerText = innerText[0].toUpperCase() + innerText.substring(1);
 
-    const versions = fileNames.filter(item => item === innerText).length;
-
-    if (versions > 0) {
-      fileNames.push(innerText);
-      innerText += ` - Version ${versions + 1}`;
-    } else {
-      fileNames.push(innerText);
-    }
-
     h2El.innerText = innerText;
 
-    document.body.appendChild(svgEl);
-    document.body.appendChild(h2El);
+    carouselEl.appendChild(svgEl);
+    carouselEl.appendChild(h2El);
 
     const data = Object.assign(
       jsonData[id],
@@ -172,8 +128,7 @@ const {
 
     svgEl.setAttribute('width', `${width}`);
 
-    const [groupKey] = data.columns;
-    const keys = data.columns.slice(1);
+    const [groupKey, ...keys] = data.columns;
 
     const color = d3.scaleOrdinal().range(['#5A78E6', '#56A6FC', '#52C9F2']);
 
@@ -281,55 +236,34 @@ const {
         .text(`${NUMBER_OF_INTERACTIONS}: ${interactions.shift()}`);
 
       svg.select('.total')
-        .on('mouseover', () => {
-          const h4 = document.querySelector('h4');
-          h4!.style.opacity = '1';
-          h4!.innerHTML =
-            `${TOTAL_AUTOMATION_TIME_ELAPSED}: ${paragraphs[TOTAL_AUTOMATION_TIME_ELAPSED]}`;
-        })
-        .on('mouseout', () => {
-          document.querySelector('h4')!.style.opacity = '0';
-        });
+        .on('mouseover', () => handleMouseOver(TOTAL))
+        .on('mouseout', () => handleMouseOut());
 
       svg.select('.interactions')
-        .on('mouseover', () => {
-          const h4 = document.querySelector('h4');
-          h4!.style.opacity = '1';
-          h4!.innerHTML =
-            `${NUMBER_OF_INTERACTIONS}: ${paragraphs[NUMBER_OF_INTERACTIONS]}`;
-        })
-        .on('mouseout', () => {
-          document.querySelector('h4')!.style.opacity = '0';
-        });
+        .on('mouseover', () => handleMouseOver(INTERACTIONS))
+        .on('mouseout', () => handleMouseOut());
 
       svg.selectAll('rect')
-        .on('mouseover', e => {
-          const { key: keyString } = (e as MouseMoveEvent).target['__data__'];
-          if (keyString) {
-            const h4 = document.querySelector('h4');
-            h4!.style.opacity = '1';
-            h4!.innerHTML = `${keyString}: ${paragraphs[keyString as ParagraphString]}`;
-
-            const span = document.querySelector('#big-tooltip span');
-            span!.innerHTML = `${keyString}: ${(e as MouseMoveEvent).target['__data__'].value} ms`;
-            (span as HTMLElement)!.style.opacity = '1';
-
-            (e as MouseMoveEvent).target.style.outline = '1px solid white';
-          }
-        })
-        .on('mouseout', e => {
-          const span = document.querySelector('#big-tooltip span');
-          span!.innerHTML = '';
-          (span as HTMLElement)!.style.opacity = '0';
-
-          (e as MouseMoveEvent).target.style.outline = 'none';
-          document.querySelector('h4')!.style.opacity = '0';
-        });
+        .on('mouseover', e => handleMouseOver(RECT, e as MouseMoveEvent))
+        .on('mouseout', e => handleMouseOut(e as MouseMoveEvent));
 
       return svg.node();
     };
 
     chart();
   }
+
+  for (const id of carouselIds) {
+    const charts = document.querySelectorAll(`div#${id} svg`);
+    const h5El = document.querySelector(`div#${id} h5`);
+    const chartCount = charts.length;
+
+    charts.forEach((chart, index) => {
+      if (index === chartCount - 1) return;
+      chart.classList.add('hidden');
+    });
+    h5El!.innerHTML = `Version ${chartCount} of ${chartCount}`;
+  }
+
   if (bodyWidth) document.body.style.width = `${bodyWidth}px`;
 })();

@@ -47,10 +47,10 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
       a lower Actual Duration since memoization would prevent rendering of the component and its \
       children unless props changed. For more info, see: https://reactjs.org/docs/profiler.html`,
   [ParagraphMap.BASE_DURATION]:
-    ` The total time it took the profiled component (not including its children) to render. This \
-      indicates the self time of that component and doesn't indicate effectiveness of memoization \
-      as well as actualDuration because the children renders are not indicated in this metric. For \
-      more details, see: https://reactjs.org/docs/profiler.html`,
+    ` The total time it took the profiled component (not including its children) to render, not \
+      taking into account memoization. This indicates the self time of that component and doesn't \
+      indicate effectiveness of memoization like actualDuration because children renders are not \
+      indicated in this metric. For more details, see: https://reactjs.org/docs/profiler.html`,
   [ParagraphMap.NUMBER_OF_INTERACTIONS]:
     ` The total number of page interactions that occurred during the automation flow.`,
   [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]:

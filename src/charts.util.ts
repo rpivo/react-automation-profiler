@@ -41,20 +41,25 @@ export enum ParagraphMap {
 
 export const paragraphs: { [key in ParagraphMap]?: string } = {
   [ParagraphMap.ACTUAL_DURATION]:
-    ` Time spent rendering the Profiler and its descendants for the current update. This 
-      indicates how well the subtree makes use of memoization (e.g. React.memo, useMemo, 
-      shouldComponentUpdate). Ideally this value should decrease significantly after the initial 
-      mount as many of the descendants will only need to re-render if their specific props 
-      change.`,
+    ` The time it took for the component as well as its children to render. Because child \
+      renders are included, this can help indicate whether memoization (React.memo, useMemo, \
+      shouldComponentUpdate) is effective. Successive renders of a memoized component should have \
+      a lower Actual Duration since memoization would prevent rendering of the component and its \
+      children unless props changed. For more info, see: https://reactjs.org/docs/profiler.html`,
   [ParagraphMap.BASE_DURATION]:
-    ` Duration of the most recent render time for each individual component within the Profiler 
-      tree. This value estimates a worst-case cost of rendering (e.g. the initial mount or a tree
-      with no memoization).`,
-  [ParagraphMap.NUMBER_OF_INTERACTIONS]: `The total number of page interactions that occurred during the 
-    automation flow.`,
+    ` The total time it took the profiled component (not including its children) to render. This \
+      indicates the self time of that component and doesn't indicate effectiveness of memoization \
+      as well as actualDuration because the children renders are not indicated in this metric. For \
+      more details, see: https://reactjs.org/docs/profiler.html`,
+  [ParagraphMap.NUMBER_OF_INTERACTIONS]:
+    ` The total number of page interactions that occurred during the automation flow.`,
   [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]:
-    ` The total time that elapsed during the automation flow. This does not indicate the total 
-      render time, but rather the total time it took for the automation to complete its flow.`,
+    ` The total time that elapsed during the automation flow. This doesn't indicate the total \
+      render time, but instead the time it took for the automation to complete. This \
+      is calculated by taking the highest commitTime of all renders and subtracting the lowest \
+      startTime of all renders, which indicates the length of time from when the \
+      automation began to when it ended. For more info on commitTime and startTime, see: \
+      https://reactjs.org/docs/profiler.html`,
 };
 
 export const createCarousel = (carouselId: string) => {

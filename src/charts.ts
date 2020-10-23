@@ -53,7 +53,6 @@ const {
   });
 
   const carouselIds = [];
-  const fileNames = [];
   const interactions: number[] = [];
   const jsonData = [];
   const allJsonValues: number[] = [];

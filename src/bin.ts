@@ -14,8 +14,12 @@ import runAutomation from './automation.js';
   `);
 
   const options = yargs
-    .usage(`Usage: --changeInterval <changeInterval> --includeMount <includeMount> --page <page> \
-      --port <port> --watch <watch>`)
+    .usage(`Usage: --averageOf <averageOf> --changeInterval <changeInterval> \
+      --includeMount <includeMount> --page <page> --port <port> --watch <watch>`)
+    .option('averageOf', {
+      describe: 'run each flow n number of times and average out the metrics',
+      type: 'number',
+    })
     .option('changeInterval', {
       describe: 'number of changes before automation is rerun',
       type: 'number',
@@ -40,6 +44,7 @@ import runAutomation from './automation.js';
     .argv;
 
   const {
+    averageOf = 1,
     changeInterval = 1,
     includeMount = false,
     page,
@@ -103,10 +108,13 @@ import runAutomation from './automation.js';
       if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
         console.log('\n🛠  preparing automation...\n');
 
-        await runAutomation(automationOptions, isServerReady);
+        for (let i = 0; i < averageOf; i++) {
+          if (!isServerReady && i > 0) isServerReady = true;
+          await runAutomation(automationOptions, isServerReady);
+        }
         changeCount = 0;
 
-        if (!isServerReady) {
+        if (!isServerReady || averageOf > 1) {
           setupProxy();
           isServerReady = true;
         } else {
@@ -121,6 +129,10 @@ import runAutomation from './automation.js';
     });
     nodemon.on('quit', () => process.exit());
   } else {
-    await runAutomation(automationOptions, isServerReady);
+    for (let i = 0; i < averageOf; i++) {
+      if (!isServerReady && i > 0) isServerReady = true;
+      await runAutomation(automationOptions, isServerReady); 
+    }
+    setupProxy();
   }
 })();

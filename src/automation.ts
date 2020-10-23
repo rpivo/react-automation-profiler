@@ -31,7 +31,9 @@ export default async ({
     .replace(/-$/, '');
 
   const getFileName = (label: string) =>
-    `${hyphenateString(`${formatLabel(label)}-${new Date().toLocaleString()}`)}.json`;
+    `${hyphenateString(
+      `${formatLabel(label)}-${new Date().toLocaleString()}-${Date.now()}`
+    )}.json`;
 
   const collectLogs = async ({ label, numberOfInteractions = 0 }: {
     label: string;

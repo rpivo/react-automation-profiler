@@ -97,19 +97,18 @@ const {
 
     if (!carouselEl) {
       carouselEl = createCarousel(carouselId);
+
+      const h2El = document.createElement('h2');
+      let innerText = file.split('-')[0].replace(/([^A-Z])([A-Z])/g, '$1 $2');
+      innerText = innerText[0].toUpperCase() + innerText.substring(1);
+      h2El.innerText = innerText;
+      carouselEl.appendChild(h2El);
+
       document.body.appendChild(carouselEl);
     }
 
     const svgEl = createSVG(id);
-
-    const h2El = document.createElement('h2');
-    let innerText = file.split('-')[0].replace(/([^A-Z])([A-Z])/g, '$1 $2');
-    innerText = innerText[0].toUpperCase() + innerText.substring(1);
-
-    h2El.innerText = innerText;
-
     carouselEl.appendChild(svgEl);
-    carouselEl.appendChild(h2El);
 
     const data = Object.assign(
       jsonData[id],

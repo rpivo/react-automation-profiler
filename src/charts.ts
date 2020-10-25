@@ -90,7 +90,9 @@ const {
   const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
   for (const [id, file] of jsonFiles.entries()) {
-    const [carouselId] = file.split('-');
+    const [singularId, multipleId] = file.split('-');
+    const carouselId = singularId === 'average' ? multipleId : singularId;
+
     carouselIds.push(carouselId);
     let carouselEl = document.getElementById(carouselId);
 
@@ -98,7 +100,7 @@ const {
       carouselEl = createCarousel(carouselId);
 
       const h2El = document.createElement('h2');
-      let innerText = file.split('-')[0].replace(/([^A-Z])([A-Z])/g, '$1 $2');
+      let innerText = carouselId.replace(/([^A-Z])([A-Z])/g, '$1 $2');
       innerText = innerText[0].toUpperCase() + innerText.substring(1);
       h2El.innerText = innerText;
       carouselEl.appendChild(h2El);

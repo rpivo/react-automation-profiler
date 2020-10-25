@@ -12,6 +12,7 @@ declare global {
   }
 
   type AutomationProps = {
+    averageOf: number;
     cwd: string;
     includeMount: boolean;
     packagePath: string;

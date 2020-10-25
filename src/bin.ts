@@ -59,9 +59,11 @@ import runAutomation from './automation.js';
 
   let changeCount = 0;
   let versionCount = 0;
+  let isProxyReady = false;
   let isServerReady = false;
 
   const automationOptions = {
+    averageOf,
     cwd,
     includeMount,
     packagePath,
@@ -79,6 +81,13 @@ import runAutomation from './automation.js';
         });
       }
     });
+  };
+
+  const handleAutomation = async () => {
+    for (let automationCount = 1; automationCount <= averageOf; automationCount++) {
+      if (!isServerReady && automationCount > 1) isServerReady = true;
+      await runAutomation(automationOptions, isServerReady, automationCount);
+    }
   };
 
   const setupProxy = () => browserSync.init({
@@ -107,16 +116,12 @@ import runAutomation from './automation.js';
     nodemon.on('message', async (event: Event) => {
       if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
         console.log('\n🛠  preparing automation...\n');
-
-        for (let i = 0; i < averageOf; i++) {
-          if (!isServerReady && i > 0) isServerReady = true;
-          await runAutomation(automationOptions, isServerReady);
-        }
+        await handleAutomation();
         changeCount = 0;
 
-        if (!isServerReady || averageOf > 1) {
+        if (!isProxyReady) {
           setupProxy();
-          isServerReady = true;
+          isProxyReady = true;
         } else {
           browserSync.reload();
         }
@@ -129,10 +134,7 @@ import runAutomation from './automation.js';
     });
     nodemon.on('quit', () => process.exit());
   } else {
-    for (let i = 0; i < averageOf; i++) {
-      if (!isServerReady && i > 0) isServerReady = true;
-      await runAutomation(automationOptions, isServerReady); 
-    }
+    await handleAutomation();
     setupProxy();
   }
 })();

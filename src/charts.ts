@@ -20,7 +20,7 @@ type Item = {
   actualDuration?: number;
   baseDuration?: number;
   commitTime: number;
-  id?: number;
+  id?: string;
   interactions?: [];
   phase?: string;
   Render?: string;
@@ -52,10 +52,11 @@ const {
     top: 10,
   });
 
+  const allJsonValues: number[] = [];
   const carouselIds = [];
   const interactions: number[] = [];
+  const itemIdLengths: number[] = [];
   const jsonData = [];
-  const allJsonValues: number[] = [];
 
   d3.select('html').on('mousemove', e => updateTooltipPosition(e as MouseEvent));
 
@@ -74,6 +75,7 @@ const {
           item.Render = `${index + 1}: ${item.id}`;
 
           allJsonValues.push((item[ACTUAL_DURATION] as number), (item[BASE_DURATION] as number));
+          itemIdLengths.push(item!.id!.length);
 
           delete item.actualDuration;
           delete item.baseDuration;
@@ -86,6 +88,7 @@ const {
       })
   );
 
+  const longestId = Math.max(...itemIdLengths);
   const tallestRect = Math.max(...allJsonValues);
   const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
@@ -118,13 +121,10 @@ const {
 
     const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;
 
-    if (data.length >= 30) {
-      width = (~~(data.length / 10) * 1000) - 1000;
-      const potentialBodyWidth = width + 600;
-      if (bodyWidth < potentialBodyWidth) bodyWidth = potentialBodyWidth;
-    } else {
-      width = 1000;
-    }
+    const potentialWidth = (~~(data.length / 10) * 875) + (Math.abs((longestId - 5)) * 150) - 1000;
+    width = potentialWidth > 1000 ? potentialWidth : 1000;
+    const potentialBodyWidth = width + 600;
+    if (bodyWidth < potentialBodyWidth) bodyWidth = potentialBodyWidth;
 
     svgEl.setAttribute('width', `${width}`);
 

@@ -45,12 +45,12 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
       renders are included, this can help indicate whether memoization (React.memo, useMemo, \
       shouldComponentUpdate) is effective. Successive renders of a memoized component should have \
       a lower Actual Duration since memoization would prevent rendering of the component and its \
-      children unless props changed. For more info, see: https://reactjs.org/docs/profiler.html`,
+      children unless props changed.`,
   [ParagraphMap.BASE_DURATION]:
     ` The total time it took the profiled component (not including its children) to render, not \
       taking into account memoization. This indicates the self time of that component and doesn't \
       indicate effectiveness of memoization like actualDuration because children renders are not \
-      indicated in this metric. For more details, see: https://reactjs.org/docs/profiler.html`,
+      indicated in this metric.`,
   [ParagraphMap.NUMBER_OF_INTERACTIONS]:
     ` The total number of page interactions that occurred during the automation flow.`,
   [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]:
@@ -58,8 +58,7 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
       render time, but instead the time it took for the automation to complete. This \
       is calculated by taking the highest commitTime of all renders and subtracting the lowest \
       startTime of all renders, which indicates the length of time from when the \
-      automation began to when it ended. For more info on commitTime and startTime, see: \
-      https://reactjs.org/docs/profiler.html`,
+      automation began to when it ended.`,
 };
 
 export const createCarousel = (carouselId: string) => {

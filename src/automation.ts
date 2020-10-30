@@ -1,6 +1,8 @@
 import express from 'express';
 import fs from 'fs';
+import jsdom from 'jsdom';
 import puppeteer, { Page } from 'puppeteer';
+import { getFileName } from './util.js';
 
 type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
@@ -22,22 +24,34 @@ automationCount: number,
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
-  const formatLabel = (label: string) => label
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('');
+  const appendJsonToExport = async () => {
+    const { JSDOM } = jsdom;
+    const contents = await fs.readFileSync(`${packagePath}/export.html`, 'utf8');
+    const { document } = new JSDOM(`${contents}`).window;
 
-  const hyphenateString = (str: string) => str
-    .replace(/(\/|\s|:|\.)/g, '-')
-    .replace(',', '')
-    .replace(/-{2,}/g, '-')
-    .replace(/-$/, '');
+    document.querySelectorAll('.json')?.forEach(item => item.remove());
 
-  const getFileName = (label?: string) =>
-    `${hyphenateString(
-      `${label ? formatLabel(label) : ''}-${new Date().toLocaleString()}-${Date.now()}`
-    )}.json`;
+    const files = fs.readdirSync(packagePath);
+    for (const file of files) {
+      if (file.includes('.json')) {
+        const jsonContents = await fs.readFileSync(`${packagePath}/${file}`, 'utf8');
+        const jsonScript = document.createElement('script');
+
+        const idArr = file.split('-');
+        const id = `${idArr[1]}-${idArr[idArr.length - 1].split('.')[0]}`;
+        jsonScript.id = id;
+        jsonScript.classList.add('json');
+        jsonScript.type ='application/json';
+
+        jsonScript.innerHTML = jsonContents;
+        document.body.appendChild(jsonScript);
+      }
+    }
+
+    await fs.writeFile(`${packagePath}/export.html`, document.documentElement.outerHTML,  err => {
+      if (err) throw err;
+    });
+  };
 
   const calculateAverage = async () => {
     await fs.readdir(packagePath, async (err, files) => {
@@ -109,9 +123,12 @@ automationCount: number,
         await fs.writeFile(
           `${packagePath}/average-${flow}${getFileName()}`,
           JSON.stringify(averagedData),
-          err => {
+          async err => {
             if (err) throw err;
-            if (averageOf === automationCount && i === flows.size - 1) createJsonList();
+            if (averageOf === automationCount && i === flows.size - 1) {
+              await appendJsonToExport();
+              await createJsonList();
+            }
           }
         );
       }
@@ -197,7 +214,10 @@ automationCount: number,
   await browser.close();
 
   if (averageOf === automationCount) await calculateAverage();
-  if (averageOf === 1) await createJsonList();
+  if (averageOf === 1) {
+    await appendJsonToExport();
+    await createJsonList();
+  }
 
   if (!isServerReady) await startServer();
 };

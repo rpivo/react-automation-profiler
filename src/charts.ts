@@ -1,9 +1,11 @@
 import * as d3 from 'd3';
 import {
+  addExportListener,
   createCarousel,
   createSVG,
   handleMouseOut,
   handleMouseOver,
+  initCarouselState,
   MouseEventSelectors,
   MouseMoveEvent,
   ParagraphMap,
@@ -253,17 +255,8 @@ const {
     chart();
   }
 
-  for (const id of carouselIds) {
-    const charts = document.querySelectorAll(`div#${id} svg`);
-    const h5El = document.querySelector(`div#${id} h5`);
-    const chartCount = charts.length;
-
-    charts.forEach((chart, index) => {
-      if (index === chartCount - 1) return;
-      chart.classList.add('hidden');
-    });
-    h5El!.innerHTML = `Version ${chartCount} of ${chartCount}`;
-  }
+  initCarouselState(carouselIds);
+  addExportListener();
 
   if (bodyWidth) document.body.style.width = `${bodyWidth}px`;
 })();

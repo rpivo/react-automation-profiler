@@ -43,16 +43,12 @@ export enum ParagraphMap {
 
 export const paragraphs: { [key in ParagraphMap]?: string } = {
   [ParagraphMap.ACTUAL_DURATION]:
-    ` The time it took for the component as well as its children to render. Because child \
-      renders are included, this can help indicate whether memoization (React.memo, useMemo, \
-      shouldComponentUpdate) is effective. Successive renders of a memoized component should have \
-      a lower Actual Duration since memoization would prevent rendering of the component and its \
-      children unless props changed.`,
+    ` The total time it actually took the component and its subtree to render. This should \
+      ideally be lower than Base Duration after successive renders if memoization techniques are \
+      in place.`,
   [ParagraphMap.BASE_DURATION]:
-    ` The total time it took the profiled component (not including its children) to render, not \
-      taking into account memoization. This indicates the self time of that component and doesn't \
-      indicate effectiveness of memoization like actualDuration because children renders are not \
-      indicated in this metric.`,
+    ` The total time it normally would take the component and its subtree to render. This does not \
+      take into account memoization for the component and its children.`,
   [ParagraphMap.NUMBER_OF_INTERACTIONS]:
     ` The total number of page interactions that occurred during the automation flow.`,
   [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]:

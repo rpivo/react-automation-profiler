@@ -40,6 +40,7 @@
   "dependencies": {
     "browser-sync": "^2.26.13",
     "express": "^4.17.1",
+    "jsdom": "^16.4.0",
     "puppeteer": "^5.4.0"
   },
   "devDependencies": {
@@ -48,6 +49,7 @@
     "@types/browser-sync": "^2.26.1",
     "@types/d3": "^5.16.3",
     "@types/express": "^4.17.8",
+    "@types/jsdom": "^16.2.5",
     "@types/node": "^14.14.2",
     "@types/nodemon": "^1.19.0",
     "@types/puppeteer": "^3.0.2",

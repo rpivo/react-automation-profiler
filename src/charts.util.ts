@@ -180,6 +180,20 @@ export const handleMouseOver = (name?: string, e?: MouseMoveEvent) => {
   }
 };
 
+export const initCarouselState = (carouselIds: string[]) => {
+  for (const id of carouselIds) {
+    const charts = document.querySelectorAll(`div#${id} svg`);
+    const h5El = document.querySelector(`div#${id} h5`);
+    const chartCount = charts.length;
+
+    charts.forEach((chart, index) => {
+      if (index === chartCount - 1) return;
+      chart.classList.add('hidden');
+    });
+    h5El!.innerHTML = `Version ${chartCount} of ${chartCount}`;
+  }
+};
+
 export const updateTooltipPosition = (e: MouseEvent) => {
   const windowWidth = window.innerWidth;
   const tooltip = document.getElementById('big-tooltip');

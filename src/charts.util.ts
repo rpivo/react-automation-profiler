@@ -59,6 +59,17 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
       automation began to when it ended.`,
 };
 
+export const addExportListener = () => {
+  const exportEl = document.querySelector('#export');
+  exportEl!.addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.download = getFileName('react-automation-profiler', 'html').toLowerCase();
+    a.href = 'export.html';
+    a.click();
+    a.remove();
+  });
+};
+
 export const createCarousel = (carouselId: string) => {
   let carouselEl = document.createElement('div');
   carouselEl.classList.add('carousel');

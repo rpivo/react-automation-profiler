@@ -10,6 +10,7 @@
       color: #FFF;
       font-family: Arial;
       font-weight: lighter;
+      margin: 0 auto;
       margin-bottom: 25px;
     }
 
@@ -46,6 +47,25 @@
       margin: 0 auto;
       padding: 25px;
       position: relative;
+    }
+
+    div#export {
+      border: 1px solid #56A6FC;
+      border-radius: 4px;
+      bottom: 25px;
+      font-size: 14px;
+      right: 25px;
+      color: #56A6FC;
+      cursor: pointer;
+      padding: 5px;
+      position: fixed;
+      z-index: 100;
+    }
+
+    div#export:hover {
+      background: white;
+      border: 1px solid white;
+      color: #333;
     }
 
     h2,
@@ -125,7 +145,8 @@
 <body>
   <h3 id='big-tooltip'><span></span></h3>
   <h4></h4>
-  <script src='charts.js' type='module'></script>
+  <div id='export'>Export</div>
+  <script id='charts' src='charts.js' type='module'></script>
 </body>
 
 </html>

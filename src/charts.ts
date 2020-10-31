@@ -29,11 +29,6 @@ type Item = {
   startTime: number;
 };
 
-type ProfilerLogs = {
-  logs: Item[];
-  numberOfInteractions: number;
-};
-
 const { INTERACTIONS, RECT, TOTAL } = MouseEventSelectors;
 
 const {
@@ -58,44 +53,49 @@ const {
   const carouselIds = [];
   const interactions: number[] = [];
   const itemIdLengths: number[] = [];
-  const jsonData = [];
+  const jsonIDs: string[] = [];
 
   d3.select('html').on('mousemove', e => updateTooltipPosition(e as MouseEvent));
 
-  const { columns: jsonFiles } = await d3.dsv(' ', 'jsonList.dsv');
+  const jsonFiles = document.querySelectorAll('.json');
+  const jsonArray: Record<string, unknown>[] = [];
+  const jsonMap = new Map();
 
-  for (const file of jsonFiles) jsonData.push(
-    await d3
-      .json(`${file}`)
-      .then(data => {
-        interactions.push((data as ProfilerLogs).numberOfInteractions);
+  jsonFiles.forEach(file => {
+    const contents = JSON.parse(file.innerHTML);
+    const id = file.id;
 
-        return (data as ProfilerLogs).logs.map((item: Item, index) => {
-          item[ACTUAL_DURATION] = item.actualDuration;
-          item[BASE_DURATION] = item.baseDuration;
+    interactions.push(contents.numberOfInteractions);
+    jsonIDs.push(id);
 
-          item.Render = `${index + 1}: ${item.id}`;
+    contents.logs = contents.logs.map((item: Item, index: number) => {
+      item[ACTUAL_DURATION] = item.actualDuration;
+      item[BASE_DURATION] = item.baseDuration;
 
-          allJsonValues.push((item[ACTUAL_DURATION] as number), (item[BASE_DURATION] as number));
-          itemIdLengths.push(item!.id!.length);
+      item.Render = `${index + 1}: ${item.id}`;
 
-          delete item.actualDuration;
-          delete item.baseDuration;
-          delete item.id;
-          delete item.interactions;
-          delete item.phase;
+      allJsonValues.push((item[ACTUAL_DURATION] as number), (item[BASE_DURATION] as number));
+      itemIdLengths.push(item!.id!.length);
 
-          return item;
-        });
-      })
-  );
+      delete item.actualDuration;
+      delete item.baseDuration;
+      delete item.id;
+      delete item.interactions;
+      delete item.phase;
+
+      return item;
+    });
+
+    jsonArray.push({ contents, id });
+    jsonMap.set(id, [...contents.logs]);
+  });
 
   const longestId = Math.max(...itemIdLengths);
   const tallestRect = Math.max(...allJsonValues);
   const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
-  for (const [id, file] of jsonFiles.entries()) {
-    const [singularId, multipleId] = file.split('-');
+  for (const [key, value] of jsonMap.entries()) {
+    const [singularId, multipleId] = key.split('-'); // can also get the ms time here
     const carouselId = singularId === 'average' ? multipleId : singularId;
 
     carouselIds.push(carouselId);
@@ -113,12 +113,11 @@ const {
       document.body.appendChild(carouselEl);
     }
 
-    const svgEl = createSVG(id);
+    const svgEl = createSVG(key);
     carouselEl.appendChild(svgEl);
 
     const data = Object.assign(
-      jsonData[id],
-      { columns: ['Render', ACTUAL_DURATION, BASE_DURATION] },
+      value, { columns: ['Render', ACTUAL_DURATION, BASE_DURATION] },
     ) as Item[] & Columns;
 
     const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;
@@ -189,7 +188,7 @@ const {
       .rangeRound([height - margin.bottom, margin.top]);
 
     const chart = () => {
-      const svg = d3.select(`#chart-${id}`) as d3.Selection<any, any, any, any>;
+      const svg = d3.select(`#chart-${key}`) as d3.Selection<any, any, any, any>;
 
       (svg as any).append('g')
         .selectAll('g')

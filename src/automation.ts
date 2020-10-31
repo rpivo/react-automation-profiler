@@ -24,9 +24,9 @@ automationCount: number,
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
-  const appendJsonToExport = async () => {
+  const appendJsonToHTML = async () => {
     const { JSDOM } = jsdom;
-    const contents = await fs.readFileSync(`${packagePath}/export.html`, 'utf8');
+    const contents = await fs.readFileSync(`${packagePath}/index.html`, 'utf8');
     const { document } = new JSDOM(`${contents}`).window;
 
     document.querySelectorAll('.json')?.forEach(item => item.remove());
@@ -39,7 +39,7 @@ automationCount: number,
 
         const idArr = file.split('-');
         const id = `${idArr[1]}-${idArr[idArr.length - 1].split('.')[0]}`;
-        jsonScript.id = id;
+        jsonScript.id = averageOf > 1 ? `average-${id}` : id;
         jsonScript.classList.add('json');
         jsonScript.type ='application/json';
 
@@ -48,9 +48,14 @@ automationCount: number,
       }
     }
 
-    await fs.writeFile(`${packagePath}/export.html`, document.documentElement.outerHTML,  err => {
-      if (err) throw err;
-    });
+    await fs.writeFile(
+      `${packagePath}/index.html`,
+      document.documentElement.outerHTML,
+      async err => {
+        if (err) throw err;
+        await generateExport(document);
+      }
+    );
   };
 
   const calculateAverage = async () => {
@@ -125,10 +130,7 @@ automationCount: number,
           JSON.stringify(averagedData),
           async err => {
             if (err) throw err;
-            if (averageOf === automationCount && i === flows.size - 1) {
-              await appendJsonToExport();
-              await createJsonList();
-            }
+            if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
           }
         );
       }
@@ -158,23 +160,15 @@ automationCount: number,
     return true;
   };
 
-  const createJsonList = async () => {
-    const jsonList: string[] = [];
-    const jsonListPath = `${packagePath}/jsonList.dsv`;
-
-    if (fs.existsSync(jsonListPath)) await fs.unlink(jsonListPath, err => {
-      if (err) throw err;
-    });
-
-    await fs.readdir(packagePath, async (err, files) => {
-      if (err) throw err;
-      for (const file of files) {
-        if (file.includes('.json')) jsonList.push(file);
-      }
-      await fs.writeFile(jsonListPath, jsonList.join(' '),  err => {
+  const generateExport = async (document: Document) => {
+    document.querySelector('#export')?.remove();
+    await fs.writeFile(
+      `${packagePath}/export.html`,
+      document.documentElement.outerHTML,
+      async err => {
         if (err) throw err;
-      });
-    });
+      }
+    );
   };
 
   const handleActions = async (actions: string[]) => {
@@ -214,10 +208,7 @@ automationCount: number,
   await browser.close();
 
   if (averageOf === automationCount) await calculateAverage();
-  if (averageOf === 1) {
-    await appendJsonToExport();
-    await createJsonList();
-  }
+  if (averageOf === 1) await appendJsonToHTML();
 
   if (!isServerReady) await startServer();
 };

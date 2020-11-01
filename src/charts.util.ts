@@ -61,7 +61,7 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
 
 export const addExportListener = () => {
   const exportEl = document.querySelector('#export');
-  exportEl!.addEventListener('click', () => {
+  exportEl?.addEventListener('click', () => {
     const a = document.createElement('a');
     a.download = getFileName('react-automation-profiler', 'html').toLowerCase();
     a.href = 'export.html';

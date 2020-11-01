@@ -1,6 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import { minify } from 'html-minifier';
+import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName } from './util.js';

@@ -58,7 +58,6 @@ const {
   d3.select('html').on('mousemove', e => updateTooltipPosition(e as MouseEvent));
 
   const jsonFiles = document.querySelectorAll('.json');
-  const jsonArray: Record<string, unknown>[] = [];
   const jsonMap = new Map();
 
   jsonFiles.forEach(file => {
@@ -85,8 +84,6 @@ const {
 
       return item;
     });
-
-    jsonArray.push({ contents, id });
     jsonMap.set(id, [...contents.logs]);
   });
 

@@ -38,8 +38,7 @@ automationCount: number,
         const jsonScript = document.createElement('script');
 
         const idArr = file.split('-');
-        const id = `${idArr[1]}-${idArr[idArr.length - 1].split('.')[0]}`;
-        jsonScript.id = averageOf > 1 ? `average-${id}` : id;
+        jsonScript.id = averageOf > 1 ? `${idArr[1]}-${idArr[2]}` : `${idArr[0]}-${idArr[1]}`;
         jsonScript.classList.add('json');
         jsonScript.type ='application/json';
 

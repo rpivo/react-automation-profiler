@@ -12,7 +12,7 @@ const hyphenateString = (str: string) => str
 
 export const getFileName = (label?: string, extension: string = 'json') =>
 `${hyphenateString(
-  `${label ? formatLabel(label) : ''}-${
-    new Date().toLocaleString()
-    }${extension === 'json' ? `-${Date.now()}` : ''}`
+  `${label ? formatLabel(label) : ''}${
+    extension === 'json' ? `-${Date.now()
+    }` : ''}-${new Date().toLocaleString()}`
 )}.${extension}`;

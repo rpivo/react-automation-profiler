@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import { minify } from 'html-minifier';
 import jsdom from 'jsdom';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName } from './util.js';
@@ -163,7 +164,7 @@ automationCount: number,
     document.querySelector('#export')?.remove();
     await fs.writeFile(
       `${packagePath}/export.html`,
-      document.documentElement.outerHTML,
+      minify(document.documentElement.outerHTML, { removeAttributeQuotes: true }),
       async err => {
         if (err) throw err;
       }

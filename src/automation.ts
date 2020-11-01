@@ -164,7 +164,13 @@ automationCount: number,
     document.querySelector('#export')?.remove();
     await fs.writeFile(
       `${packagePath}/export.html`,
-      minify(document.documentElement.outerHTML, { removeAttributeQuotes: true }),
+      minify(document.documentElement.outerHTML, {
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        removeAttributeQuotes: true,
+      }),
       async err => {
         if (err) throw err;
       }

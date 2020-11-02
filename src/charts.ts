@@ -13,7 +13,7 @@ import {
 } from './charts.util';
 
 type Columns = {
-  columns: ['Render', typeof ACTUAL_DURATION, typeof BASE_DURATION];
+  columns: ['Render', typeof BASE_DURATION, typeof ACTUAL_DURATION,];
 };
 
 type Item = {
@@ -114,7 +114,7 @@ const {
     carouselEl.appendChild(svgEl);
 
     const data = Object.assign(
-      value, { columns: ['Render', ACTUAL_DURATION, BASE_DURATION] },
+      value, { columns: ['Render', BASE_DURATION, ACTUAL_DURATION] },
     ) as Item[] & Columns;
 
     const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;

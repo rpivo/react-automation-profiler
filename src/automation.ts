@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
+import yaml from 'js-yaml';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName } from './util.js';
 
@@ -182,7 +183,14 @@ automationCount: number,
   };
 
   const runFlows = async () => {
-    const file = await import(`${cwd}/react.automation.js`);
+    try {
+      const automationFile = yaml.safeLoad(fs.readFileSync(`${cwd}/react.automation.yml`, 'utf8'));
+      console.log(automationFile);
+    } catch (e) {
+      console.log('react.automation yaml file wasn\'t found.');
+    }
+
+    const file = await import(`${cwd}/react.automation.js`); //
     const { default: flows } = file;
     const keys = Object.keys(flows);
 

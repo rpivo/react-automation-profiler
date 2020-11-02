@@ -145,7 +145,6 @@ automationCount: number,
     if (label !== MOUNT || (label === MOUNT && includeMount)) {
       const logs = await page.evaluate(() => window.profiler);
       const fileName = getFileName(label);
-
       if (logs.length === 0) return false;
   
       await fs.writeFile(
@@ -179,28 +178,35 @@ automationCount: number,
   };
 
   const handleActions = async (actions: string[]) => {
-    for (let i = 0; i < actions.length; i += 2) await page[actions[i]](actions[i + 1]);
+    for (const action of actions) {
+      const [type, selector] = action.split(' ');
+      await page[type](selector);
+    }
   };
 
   const runFlows = async () => {
     try {
-      const automationFile = yaml.safeLoad(fs.readFileSync(`${cwd}/react.automation.yml`, 'utf8'));
-      console.log(automationFile);
+      const flows = yaml.safeLoad(fs.readFileSync(`${cwd}/react.automation.yml`, 'utf8')) as {
+        [key: string]: string[];
+      };
+
+      if (flows) {
+        const keys = Object.keys(flows);
+        let attempts = 0;
+        for (let i = 0; i < keys.length; i++) {
+          await handleActions(flows[keys[i]]);
+          const success = await collectLogs({
+            label: keys[i],
+            numberOfInteractions: flows[keys[i]].length,
+          });
+          if (!success) {
+            if (attempts++ < 3) i -= 1;
+            else console.log(`🚫 Automation flow "${keys[i]}" did not produce any renders.`);
+          }
+        }
+      }
     } catch (e) {
       console.log('react.automation yaml file wasn\'t found.');
-    }
-
-    const file = await import(`${cwd}/react.automation.js`); //
-    const { default: flows } = file;
-    const keys = Object.keys(flows);
-
-    for (let i = 0; i < keys.length; i++) {
-      await handleActions(flows[keys[i]]);
-      const success = await collectLogs({
-        label: keys[i],
-        numberOfInteractions: flows[keys[i]].length / 2,
-      });
-      if (!success) i -= 1;
     }
   };
 

@@ -54,31 +54,24 @@ You can wrap as many components and at as many levels as you want. `react-automa
 
 ## Automation Flows
 
-You can define your automation flows in a file at the root of your repo using the name **react.automation.js**.
+You can define your automation flows in a YAML file at the root of your repo using the name **react.automation.yml** (or **.yaml** extension).
 
-Here's an example **react.automation.js** file:
+Here's an example **react.automation.yml** file:
 
-```js
-const CLICK = 'click';
-
-module.exports = {
-  'Toggle PlayArea Card Active': [
-    CLICK, 'div.playArea div.card',
-    CLICK, 'div.playArea',
-  ],
-  'Click Each PlayArea Card': [
-    CLICK, 'div.playArea div.card:nth-of-type(1)',
-    CLICK, 'div.playArea div.card:nth-of-type(2)',
-    CLICK, 'div.playArea div.card:nth-of-type(3)',
-    CLICK, 'div.playArea div.card:nth-of-type(4)',
-    CLICK, 'div.playArea div.card:nth-of-type(5)',
-    CLICK, 'div.playArea',
-  ],
-  'Draw Card': [
-    CLICK, 'div.stackedCard',
-    CLICK, 'div.playArea',
-  ],
-};
+```yaml
+Toggle PlayArea Card Active:
+- click div.playArea div.card
+- click div.playArea
+Click Each PlayArea Card:
+- click div.playArea div.card:nth-of-type(1)
+- click div.playArea div.card:nth-of-type(2)
+- click div.playArea div.card:nth-of-type(3)
+- click div.playArea div.card:nth-of-type(4)
+- click div.playArea div.card:nth-of-type(5)
+- click div.playArea
+Draw Card:
+- click div.stackedCard
+- click div.playArea
 ```
 
 In this file, export a default object containing keys that represent each of your automation flows. In the above example, there are three flows:

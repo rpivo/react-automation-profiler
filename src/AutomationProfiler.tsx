@@ -1,11 +1,6 @@
 import React from 'react';
 
-type AutomationProfilerProps = {
-  children: React.ReactNode;
-  id: string;
-};
-
-export const handleRender = (
+function handleRender(
   id: string,
   phase: string,
   actualDuration: number,
@@ -13,7 +8,7 @@ export const handleRender = (
   startTime: number,
   commitTime: number,
   interactions: Set<{ id: number; name: string; timestamp: number; }>,
-): void => {
+): void {
   if (!window.profiler) window.profiler = [];
   window.profiler.push({
     actualDuration,
@@ -24,12 +19,13 @@ export const handleRender = (
     phase,
     startTime,
   });
-};
+}
 
-export const AutomationProfiler: React.FC<AutomationProfilerProps> =
-  ({ children, id }: AutomationProfilerProps): JSX.Element =>
-    <React.Profiler id={id} onRender={handleRender}>
-      {children}
-    </React.Profiler>;
+function AutomationProfiler({ children, id }: {
+  children: React.ReactNode;
+  id: string;
+}): JSX.Element {
+  return <React.Profiler id={id} onRender={handleRender}>{children}</React.Profiler>;
+}
 
 export default AutomationProfiler;

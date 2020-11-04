@@ -38,7 +38,7 @@ const {
   TOTAL_AUTOMATION_TIME_ELAPSED,
 } = ParagraphMap;
 
-(async () => {
+(async function() {
   const height = 500;
   let width = 1000;
   let bodyWidth = 0;
@@ -92,7 +92,7 @@ const {
   const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
 
   for (const [key, value] of jsonMap.entries()) {
-    const [singularId, multipleId] = key.split('-'); // can also get the ms time here
+    const [singularId, multipleId] = key.split('-');
     const carouselId = singularId === 'average' ? multipleId : singularId;
 
     carouselIds.push(carouselId);

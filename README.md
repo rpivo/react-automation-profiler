@@ -74,19 +74,17 @@ Draw Card:
 - click div.playArea
 ```
 
-In this file, export a default object containing keys that represent each of your automation flows. In the above example, there are three flows:
-- `'Toggle PlayArea Card Active'`
-- `'Click Each PlayArea Card'`
-- `'Draw Card'`
+In the file above, there are three keys that each represent a different automation flow:
+- `Toggle PlayArea Card Active`
+- `Click Each PlayArea Card`
+- `Draw Card`
+
+In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `div.playArea div.card`, and then clicking the CSS selector `div.playArea`. This represents what a user would do when toggling a PlayArea Card's active state.
 
 There are currently three **action types** that can be used in **react.automation.js**:
-- `'click'`
-- '`focus`'
-- `'hover'`
-
-Each flow has the shape `[key: string]: string[]`. Each key is a string that briefly describes the scenario of the flow, and the value is an array of strings, each item of which alternates between an Action Type that will be evaluated followed by a CSS selector representing the element that the Action Type will be used on.
-
-In the example above, the first flow `'Toggle PlayArea Card Active'` has two actions: clicking the CSS selector `'div.playArea div.card'`, and then clicking the CSS selector `'div.playArea'`. This represents what a user would do when toggling a PlayArea Card's active state.
+- `click`
+- `focus`
+- `hover`
 
 > **Note**: The automation flows will run one after another in the order they are listed in the automation file. No subsequent page loads happen between each flow.
 

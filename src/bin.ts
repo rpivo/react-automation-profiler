@@ -7,7 +7,12 @@ import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import runAutomation from './automation.js';
 
-(async () => {
+enum LogTypes {
+  START = 'START',
+  STOP = 'STOP',
+}
+
+(async function() {
   console.log(`
   █▀█ ▄▀█ █▀█
   █▀▄ █▀█ █▀▀ \x1b[1;32mreact automation profiler\x1b[37m
@@ -72,7 +77,7 @@ import runAutomation from './automation.js';
     url: page,
   };
 
-  const deleteJsonFiles = async () => {
+  async function deleteJsonFiles() {
     await fs.readdir(packagePath, (err, files) => {
       if (err) throw err;
       for (const file of files) {
@@ -83,22 +88,34 @@ import runAutomation from './automation.js';
     });
   };
 
-  const handleAutomation = async () => {
+  async function handleAutomation() {
     for (let automationCount = 1; automationCount <= averageOf; automationCount++) {
       if (!isServerReady && automationCount > 1) isServerReady = true;
       await runAutomation(automationOptions, isServerReady, automationCount);
     }
   };
 
-  const setupProxy = () => browserSync.init({
-    browser: 'google chrome',
-    logLevel: 'silent',
-    notify: false,
-    open: true,
-    port,
-    proxy: serverPath,
-    reloadOnRestart: true,
-  });
+  function printMessage(logType: string) {
+    const message = logType === LogTypes.START ?
+      '\n🛠  preparing automation...\n' : 
+      `📡  displaying ${
+        versionCount++ ? `${versionCount} versions of `: ''
+      }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
+    `;
+    console.log(message);
+  };
+
+  function setupProxy() {
+    browserSync.init({
+      browser: 'google chrome',
+      logLevel: 'silent',
+      notify: false,
+      open: true,
+      port,
+      proxy: serverPath,
+      reloadOnRestart: true,
+    });
+  };
 
   await deleteJsonFiles();
 
@@ -115,7 +132,7 @@ import runAutomation from './automation.js';
 
     nodemon.on('message', async (event: Event) => {
       if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
-        console.log('\n🛠  preparing automation...\n');
+        printMessage(LogTypes.START);
         await handleAutomation();
         changeCount = 0;
 
@@ -126,15 +143,14 @@ import runAutomation from './automation.js';
           browserSync.reload();
         }
 
-        console.log(`📡  displaying ${
-            versionCount++ ? `${versionCount} versions of `: ''
-          }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
-        `);
+        printMessage(LogTypes.STOP);
       };
     });
     nodemon.on('quit', () => process.exit());
   } else {
+    printMessage(LogTypes.START);
     await handleAutomation();
     setupProxy();
+    printMessage(LogTypes.STOP);
   }
 })();

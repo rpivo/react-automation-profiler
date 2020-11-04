@@ -59,7 +59,7 @@ export const paragraphs: { [key in ParagraphMap]?: string } = {
       automation began to when it ended.`,
 };
 
-export const addExportListener = () => {
+export function addExportListener() {
   const exportEl = document.querySelector('#export');
   exportEl?.addEventListener('click', () => {
     const a = document.createElement('a');
@@ -68,9 +68,9 @@ export const addExportListener = () => {
     a.click();
     a.remove();
   });
-};
+}
 
-export const createCarousel = (carouselId: string) => {
+export function createCarousel(carouselId: string) {
   let carouselEl = document.createElement('div');
   carouselEl.classList.add('carousel');
   carouselEl.setAttribute('id', `${carouselId}`);
@@ -104,16 +104,16 @@ export const createCarousel = (carouselId: string) => {
   carouselEl.appendChild(arrowWrapperEl);
 
   return carouselEl;
-};
+}
 
-export const createSVG = (id: number) => {
+export function createSVG(id: number) {
   const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svgEl.setAttribute('id', `chart-${id}`);
   svgEl.setAttribute('height', '575');
   return svgEl;
-};
+}
 
-const handleArrowClick = (e: MouseClickEvent, arrowType: ArrowTypes.LEFT | ArrowTypes.RIGHT) => {
+function handleArrowClick(e: MouseClickEvent, arrowType: ArrowTypes.LEFT | ArrowTypes.RIGHT) {
   const { LEFT, RIGHT } = ArrowTypes;
 
   const carousel = e.path[2];
@@ -134,9 +134,9 @@ const handleArrowClick = (e: MouseClickEvent, arrowType: ArrowTypes.LEFT | Arrow
   SVGs[visibleSVGIndex].classList.add('hidden');
 
   h5El!.innerHTML = `Version ${indexToUpdate + 1} of ${SVGs.length}`;
-};
+}
 
-export const handleMouseOut = (e?: MouseMoveEvent) => {
+export function handleMouseOut(e?: MouseMoveEvent) {
   document.querySelector('h4')!.style.opacity = '0';
   if (e) {
     const span = document.querySelector('#big-tooltip span');
@@ -144,9 +144,9 @@ export const handleMouseOut = (e?: MouseMoveEvent) => {
     (span as HTMLElement)!.style.opacity = '0';
     (e as MouseMoveEvent).target.style.outline = 'none';
   }
-};
+}
 
-export const handleMouseOver = (name?: string, e?: MouseMoveEvent) => {
+export function handleMouseOver(name?: string, e?: MouseMoveEvent) {
   const { INTERACTIONS, RECT, TOTAL } = MouseEventSelectors;
   const { NUMBER_OF_INTERACTIONS, TOTAL_AUTOMATION_TIME_ELAPSED } = ParagraphMap;
   const h4 = document.querySelector('h4');
@@ -178,9 +178,9 @@ export const handleMouseOver = (name?: string, e?: MouseMoveEvent) => {
     default:
       break;
   }
-};
+}
 
-export const initCarouselState = (carouselIds: string[]) => {
+export function initCarouselState(carouselIds: string[]) {
   for (const id of carouselIds) {
     const charts = document.querySelectorAll(`div#${id} svg`);
     const h5El = document.querySelector(`div#${id} h5`);
@@ -192,9 +192,9 @@ export const initCarouselState = (carouselIds: string[]) => {
     });
     h5El!.innerHTML = `Version ${chartCount} of ${chartCount}`;
   }
-};
+}
 
-export const updateTooltipPosition = (e: MouseEvent) => {
+export function updateTooltipPosition(e: MouseEvent) {
   const windowWidth = window.innerWidth;
   const tooltip = document.getElementById('big-tooltip');
   const { clientX, clientY }: { clientX: number; clientY: number } = e;
@@ -203,4 +203,4 @@ export const updateTooltipPosition = (e: MouseEvent) => {
   tooltip!.style.left =
     `${clientX > rightBuffer ? clientX - (clientX - rightBuffer) : clientX}px`;
   tooltip!.style.top = `${clientY}px`;
-};
+}

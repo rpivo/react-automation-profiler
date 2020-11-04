@@ -86,14 +86,14 @@ enum LogTypes {
         });
       }
     });
-  };
+  }
 
   async function handleAutomation() {
     for (let automationCount = 1; automationCount <= averageOf; automationCount++) {
       if (!isServerReady && automationCount > 1) isServerReady = true;
       await runAutomation(automationOptions, isServerReady, automationCount);
     }
-  };
+  }
 
   function printMessage(logType: string) {
     const message = logType === LogTypes.START ?
@@ -103,7 +103,7 @@ enum LogTypes {
       }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
     `;
     console.log(message);
-  };
+  }
 
   function setupProxy() {
     browserSync.init({
@@ -115,7 +115,7 @@ enum LogTypes {
       proxy: serverPath,
       reloadOnRestart: true,
     });
-  };
+  }
 
   await deleteJsonFiles();
 

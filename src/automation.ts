@@ -10,7 +10,7 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
-export default async ({
+export default async function({
   averageOf,
   cwd,
   includeMount,
@@ -20,13 +20,13 @@ export default async ({
 }: AutomationProps,
 isServerReady: boolean,
 automationCount: number,
-) => {
+) {
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
-  const appendJsonToHTML = async () => {
+  async function appendJsonToHTML() {
     const { JSDOM } = jsdom;
     const contents = await fs.readFileSync(`${packagePath}/index.html`, 'utf8');
     const { document } = new JSDOM(`${contents}`).window;
@@ -57,9 +57,9 @@ automationCount: number,
         await generateExport(document);
       }
     );
-  };
+  }
 
-  const calculateAverage = async () => {
+  async function calculateAverage() {
     await fs.readdir(packagePath, async (err, files) => {
       if (err) throw err;
 
@@ -136,12 +136,12 @@ automationCount: number,
         );
       }
     });
-  };
+  }
 
-  const collectLogs = async ({ label, numberOfInteractions = 0 }: {
+  async function collectLogs({ label, numberOfInteractions = 0 }: {
     label: string;
     numberOfInteractions?: number,
-  }) => {
+  }) {
     if (label !== MOUNT || (label === MOUNT && includeMount)) {
       const logs = await page.evaluate(() => window.profiler);
       const fileName = getFileName(label);
@@ -158,9 +158,9 @@ automationCount: number,
       window.profiler = [];
     });
     return true;
-  };
+  }
 
-  const generateExport = async (document: Document) => {
+  async function generateExport(document: Document) {
     document.querySelector('#export')?.remove();
     await fs.writeFile(
       `${packagePath}/export.html`,
@@ -175,16 +175,16 @@ automationCount: number,
         if (err) throw err;
       }
     );
-  };
+  }
 
-  const handleActions = async (actions: string[]) => {
+  async function handleActions(actions: string[]) {
     for (const action of actions) {
       const [type, selector] = action.split(' ');
       await page[type](selector);
     }
-  };
+  }
 
-  const runFlows = async () => {
+  async function runFlows() {
     try {
       const flows = yaml.safeLoad(fs.readFileSync(`${cwd}/react.automation.yml`, 'utf8')) as {
         [key: string]: string[];
@@ -208,14 +208,14 @@ automationCount: number,
     } catch (e) {
       console.log('react.automation yaml file wasn\'t found.');
     }
-  };
+  }
 
-  const startServer = async () => {
+  async function startServer() {
     const app = express();
     app.use(express.static(packagePath));
     app.get('/', (_, res) => res.sendFile(`${packagePath}/index.html`));
     app.listen(serverPort);
-  };
+  }
 
   await page.goto(url);
   await page.setViewport({
@@ -231,4 +231,4 @@ automationCount: number,
   if (averageOf === 1) await appendJsonToHTML();
 
   if (!isServerReady) await startServer();
-};
+}

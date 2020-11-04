@@ -4,7 +4,7 @@ import jsdom from 'jsdom';
 
 import { fileURLToPath } from 'url';
 
-(async () => {
+(async function() {
   const scriptPath = fileURLToPath(import.meta.url);
   const path = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
   const { JSDOM } = jsdom;

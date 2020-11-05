@@ -52,6 +52,8 @@ export default () =>
 
 You can wrap as many components and at as many levels as you want. `react-automation-profiler` will track all of these components' renders and auto-generate charts based on render metrics of these components during specific user flows.
 
+TypeScript types are included in the package for `AutomationProfiler`.
+
 ## Automation Flows
 
 You can define your automation flows in a YAML file at the root of your repo using the name **react.automation.yml** (or **.yaml** extension).

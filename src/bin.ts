@@ -82,7 +82,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
       }
     } catch(e) {
-      printMessage(ERROR, { e, errorMessage: 'An error occurred while deleting JSON files.' });
+      printMessage(ERROR, { e, log: 'An error occurred while deleting JSON files.' });
     }
   }
 

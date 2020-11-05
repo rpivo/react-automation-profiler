@@ -28,7 +28,6 @@ function hyphenateString(str: string) {
 
 export function printMessage(messageType: string, params?: {
   e?: Error;
-  errorMessage?: string;
   log?: string;
 }) {
   let message: string = '';
@@ -44,8 +43,8 @@ export function printMessage(messageType: string, params?: {
       break;
     }
     case MessageTypes.ERROR: {
-      const { e, errorMessage } = params!;
-      message = `❌ ${errorMessage}: ${ JSON.stringify(e) }`;
+      const { e = null, log } = params!;
+      message = `❌ ${log}${ e ? `: ${JSON.stringify(e)}` : '' }`;
       break;
     }
     case MessageTypes.NOTICE: {

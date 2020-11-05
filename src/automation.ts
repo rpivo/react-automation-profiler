@@ -10,6 +10,12 @@ type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
+enum Actions {
+  click = 'click',
+  focus = 'focus',
+  hover = 'hover',
+}
+
 const { ERROR, NOTICE } = MessageTypes;
 
 export default async function({
@@ -54,7 +60,7 @@ automationCount: number,
       await fs.writeFile(`${packagePath}/index.html`, document.documentElement.outerHTML);
       await generateExport(document);
     } catch(e) {
-      printMessage(ERROR, { e, errorMessage: 'Could not append JSON data to HTML file.' });
+      printMessage(ERROR, { e, log: 'Could not append JSON data to HTML file.' });
     }
   }
 
@@ -134,7 +140,7 @@ automationCount: number,
         if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
       }
     } catch(e) {
-      printMessage(ERROR, { e, errorMessage: 'An error occurred while calculating averages.' });
+      printMessage(ERROR, { e, log: 'An error occurred while calculating averages.' });
     }
   }
 
@@ -153,7 +159,7 @@ automationCount: number,
           JSON.stringify({ logs, numberOfInteractions }),
         );
       } catch(e) {
-        printMessage(ERROR, { e, errorMessage: 'An error occurred while collecting automation log data.' });
+        printMessage(ERROR, { e, log: 'An error occurred while collecting automation log data.' });
       }
     }
     await page.evaluate(() => {
@@ -176,14 +182,15 @@ automationCount: number,
         }),
       );
     } catch(e) {
-      printMessage(ERROR, { e, errorMessage: 'An error occurred while generating a new export file.' });
+      printMessage(ERROR, { e, log: 'An error occurred while generating a new export file.' });
     }
   }
 
   async function handleActions(actions: string[]) {
     for (const action of actions) {
-      const [type, ...selector] = action.split(' ');
-      await page[type](selector.join(' '));
+      const [actionType, ...selector] = action.split(' ');
+      if (actionType in Actions) await page[actionType](selector.join(' '));
+      else throw printMessage(ERROR, { log: 'One or more action types provided was not valid.' });
     }
   }
 
@@ -209,7 +216,7 @@ automationCount: number,
         }
       }
     } catch(e) {
-      printMessage(ERROR, { e, errorMessage: 'An error occurred while trying to run automation flows.' });
+      printMessage(ERROR, { e, log: 'An error occurred while trying to run automation flows.' });
     }
   }
 

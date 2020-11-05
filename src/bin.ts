@@ -6,11 +6,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import runAutomation from './automation.js';
+import { MessageTypes, printMessage } from './util.js';
 
-enum LogTypes {
-  START = 'START',
-  STOP = 'STOP',
-}
+const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
 (async function() {
   console.log(`
@@ -84,8 +82,14 @@ enum LogTypes {
         if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
       }
     } catch(e) {
-      console.log('❌ An error occurred while deleting JSON files.', e);
+      printMessage(ERROR, { e, errorMessage: 'An error occurred while deleting JSON files.' });
     }
+  }
+
+  function getStopMessage() {
+   return `displaying ${
+     versionCount++ ? `${versionCount} versions of `: ''
+    }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m`;
   }
 
   async function handleAutomation() {
@@ -93,16 +97,6 @@ enum LogTypes {
       if (!isServerReady && automationCount > 1) isServerReady = true;
       await runAutomation(automationOptions, isServerReady, automationCount);
     }
-  }
-
-  function printMessage(logType: string) {
-    const message = logType === LogTypes.START ?
-      '\n🛠  preparing automation...\n' : 
-      `📡  displaying ${
-        versionCount++ ? `${versionCount} versions of `: ''
-      }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m
-    `;
-    console.log(message);
   }
 
   function setupProxy() {
@@ -132,7 +126,8 @@ enum LogTypes {
 
     nodemon.on('message', async (event: Event) => {
       if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
-        printMessage(LogTypes.START);
+        printMessage(AUTOMATION_START);
+
         await handleAutomation();
         changeCount = 0;
 
@@ -143,14 +138,16 @@ enum LogTypes {
           browserSync.reload();
         }
 
-        printMessage(LogTypes.STOP);
+        printMessage(AUTOMATION_STOP, { log: getStopMessage() });
       };
     });
     nodemon.on('quit', () => process.exit());
   } else {
-    printMessage(LogTypes.START);
+    printMessage(AUTOMATION_START);
+
     await handleAutomation();
     setupProxy();
-    printMessage(LogTypes.STOP);
+
+    printMessage(AUTOMATION_STOP, { log: getStopMessage() });
   }
 })();

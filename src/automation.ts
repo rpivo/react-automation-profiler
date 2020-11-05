@@ -4,11 +4,13 @@ import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
 import puppeteer, { Page } from 'puppeteer';
-import { getFileName } from './util.js';
+import { getFileName, MessageTypes, printMessage } from './util.js';
 
 type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
+
+const { ERROR, NOTICE } = MessageTypes;
 
 export default async function({
   averageOf,
@@ -52,7 +54,7 @@ automationCount: number,
       await fs.writeFile(`${packagePath}/index.html`, document.documentElement.outerHTML);
       await generateExport(document);
     } catch(e) {
-      console.log('❌ Could not append JSON data to HTML file.', e);
+      printMessage(ERROR, { e, errorMessage: 'Could not append JSON data to HTML file.' });
     }
   }
 
@@ -132,7 +134,7 @@ automationCount: number,
         if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
       }
     } catch(e) {
-      console.log('❌ An error occurred while calculating averages.', e);
+      printMessage(ERROR, { e, errorMessage: 'An error occurred while calculating averages.' });
     }
   }
 
@@ -151,7 +153,7 @@ automationCount: number,
           JSON.stringify({ logs, numberOfInteractions }),
         );
       } catch(e) {
-        console.log('❌ An error occurred while collecting automation log data.', e);
+        printMessage(ERROR, { e, errorMessage: 'An error occurred while collecting automation log data.' });
       }
     }
     await page.evaluate(() => {
@@ -174,7 +176,7 @@ automationCount: number,
         }),
       );
     } catch(e) {
-      console.log('❌ An error occurred while generating a new export file.', e);
+      printMessage(ERROR, { e, errorMessage: 'An error occurred while generating a new export file.' });
     }
   }
 
@@ -202,12 +204,12 @@ automationCount: number,
           });
           if (!success) {
             if (attempts++ < 3) i -= 1;
-            else console.log(`🚫 Automation flow "${keys[i]}" did not produce any renders.\n`);
+            else printMessage(NOTICE, { log: `Automation flow "${keys[i]}" did not produce any renders.\n` });
           }
         }
       }
     } catch(e) {
-      console.log('❌ An error occurred while trying to run automation flows.', e);
+      printMessage(ERROR, { e, errorMessage: 'An error occurred while trying to run automation flows.' });
     }
   }
 

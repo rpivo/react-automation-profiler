@@ -1,7 +1,7 @@
 #!/usr/bin/env node --no-warnings
 import browserSync from 'browser-sync';
 import { spawn } from 'child_process';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
@@ -78,14 +78,14 @@ enum LogTypes {
   };
 
   async function deleteJsonFiles() {
-    await fs.readdir(packagePath, (err, files) => {
-      if (err) throw err;
+    try {
+      const files = await fs.readdir(packagePath);
       for (const file of files) {
-        if (file.includes('.json')) fs.unlink(path.join(packagePath, file), err => {
-          if (err) throw err;
-        });
+        if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
       }
-    });
+    } catch(e) {
+      console.log('❌ An error occurred while deleting JSON files.');
+    }
   }
 
   async function handleAutomation() {

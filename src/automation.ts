@@ -36,7 +36,7 @@ automationCount: number,
       const files = await fs.readdir(packagePath);
       for (const file of files) {
         if (file.includes('.json')) {
-          const jsonContents = await fs.readFile(`${packagePath}/${file}`, 'utf8'); //
+          const jsonContents = await fs.readFile(`${packagePath}/${file}`, 'utf8');
           const jsonScript = document.createElement('script');
   
           const idArr = file.split('-');
@@ -52,7 +52,7 @@ automationCount: number,
       await fs.writeFile(`${packagePath}/index.html`, document.documentElement.outerHTML);
       await generateExport(document);
     } catch(e) {
-      console.log('❌ Could not append JSON data to HTML file.');
+      console.log('❌ Could not append JSON data to HTML file.', e);
     }
   }
 
@@ -132,7 +132,7 @@ automationCount: number,
         if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
       }
     } catch(e) {
-      console.log('❌ An error occurred while calculating averages.');
+      console.log('❌ An error occurred while calculating averages.', e);
     }
   }
 
@@ -180,8 +180,8 @@ automationCount: number,
 
   async function handleActions(actions: string[]) {
     for (const action of actions) {
-      const [type, selector] = action.split(' ');
-      await page[type](selector);
+      const [type, ...selector] = action.split(' ');
+      await page[type](selector.join(' '));
     }
   }
 
@@ -206,7 +206,7 @@ automationCount: number,
           }
         }
       }
-    } catch (e) {
+    } catch(e) {
       console.log('❌ An error occurred while trying to run automation flows.', e);
     }
   }

@@ -1,8 +1,8 @@
 #!/usr/bin/env node --no-warnings
 import fs from 'fs/promises';
 import jsdom from 'jsdom';
-
 import { fileURLToPath } from 'url';
+import { MessageTypes, printMessage } from './util.js';
 
 (async function() {
   const scriptPath = fileURLToPath(import.meta.url);
@@ -23,6 +23,6 @@ import { fileURLToPath } from 'url';
   
     await fs.writeFile(`${path}/index.html`, document.documentElement.outerHTML);
   } catch(e) {
-    console.log('❌ An error occurred while appending charts.js to index.html.', e);
+    printMessage(MessageTypes.ERROR, { e, log: 'An error occurred while appending charts.js to index.html.' });
   }
 })();

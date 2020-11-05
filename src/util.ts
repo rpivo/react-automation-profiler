@@ -39,12 +39,12 @@ export function printMessage(messageType: string, params?: {
     }
     case MessageTypes.AUTOMATION_STOP: {
       const { log } = params!;
-      message = `📡  ${log}\n`;
+      message = `📡 ${log}\n`;
       break;
     }
     case MessageTypes.ERROR: {
       const { e = null, log } = params!;
-      message = `❌ ${log}${ e ? `: ${JSON.stringify(e)}` : '' }`;
+      message = `❌ ${log}${ e ? `: ${JSON.stringify(e)}` : '' }\n`;
       break;
     }
     case MessageTypes.NOTICE: {

@@ -87,7 +87,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
   }
 
   function getStopMessage() {
-   return `displaying ${
+   return `Displaying ${
      versionCount++ ? `${versionCount} versions of `: ''
     }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m`;
   }
@@ -128,7 +128,12 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
       if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
         printMessage(AUTOMATION_START);
 
-        await handleAutomation();
+        try {
+          await handleAutomation();
+        } catch {
+          process.exit();
+        }
+
         changeCount = 0;
 
         if (!isProxyReady) {
@@ -145,9 +150,13 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
   } else {
     printMessage(AUTOMATION_START);
 
-    await handleAutomation();
-    setupProxy();
+    try {
+      await handleAutomation();
+    } catch {
+      process.exit();
+    }
 
+    setupProxy();
     printMessage(AUTOMATION_STOP, { log: getStopMessage() });
   }
 })();

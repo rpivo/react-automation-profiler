@@ -34,6 +34,8 @@ automationCount: number,
   const browser = await puppeteer.launch();
   const page = await browser.newPage() as StringIndexablePage;
 
+  let errorMessage: string = '';
+
   async function appendJsonToHTML() {
     const { JSDOM } = jsdom;
     try {
@@ -60,7 +62,8 @@ automationCount: number,
       await fs.writeFile(`${packagePath}/index.html`, document.documentElement.outerHTML);
       await generateExport(document);
     } catch(e) {
-      printMessage(ERROR, { e, log: 'Could not append JSON data to HTML file.' });
+      errorMessage = 'Could not append JSON data to HTML file.';
+      printMessage(ERROR, { e, log: errorMessage });
     }
   }
 
@@ -140,7 +143,8 @@ automationCount: number,
         if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
       }
     } catch(e) {
-      printMessage(ERROR, { e, log: 'An error occurred while calculating averages.' });
+      errorMessage = 'An error occurred while calculating averages.';
+      printMessage(ERROR, { e, log: errorMessage });
     }
   }
 
@@ -159,7 +163,8 @@ automationCount: number,
           JSON.stringify({ logs, numberOfInteractions }),
         );
       } catch(e) {
-        printMessage(ERROR, { e, log: 'An error occurred while collecting automation log data.' });
+        errorMessage = 'An error occurred while collecting automation log data.';
+        printMessage(ERROR, { e, log: errorMessage });
       }
     }
     await page.evaluate(() => {
@@ -182,7 +187,8 @@ automationCount: number,
         }),
       );
     } catch(e) {
-      printMessage(ERROR, { e, log: 'An error occurred while generating a new export file.' });
+      errorMessage = 'An error occurred while generating a new export file.';
+      printMessage(ERROR, { e, log: errorMessage });
     }
   }
 
@@ -190,7 +196,10 @@ automationCount: number,
     for (const action of actions) {
       const [actionType, ...selector] = action.split(' ');
       if (actionType in Actions) await page[actionType](selector.join(' '));
-      else throw printMessage(ERROR, { log: 'One or more action types provided was not valid.' });
+      else {
+        errorMessage = 'One or more action types provided was not valid.';
+        throw printMessage(ERROR, { log: errorMessage });
+      }
     }
   }
 
@@ -216,7 +225,8 @@ automationCount: number,
         }
       }
     } catch(e) {
-      printMessage(ERROR, { e, log: 'An error occurred while trying to run automation flows.' });
+      errorMessage = 'An error occurred while trying to run automation flows.';
+      printMessage(ERROR, { e, log: errorMessage });
     }
   }
 
@@ -241,4 +251,6 @@ automationCount: number,
   if (averageOf === 1) await appendJsonToHTML();
 
   if (!isServerReady) await startServer();
+
+  if (errorMessage) throw printMessage(ERROR, { log: 'Automation could not complete because of the above errors.' });
 }

@@ -84,7 +84,7 @@ enum LogTypes {
         if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
       }
     } catch(e) {
-      console.log('❌ An error occurred while deleting JSON files.');
+      console.log('❌ An error occurred while deleting JSON files.', e);
     }
   }
 

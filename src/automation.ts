@@ -151,7 +151,7 @@ automationCount: number,
           JSON.stringify({ logs, numberOfInteractions }),
         );
       } catch(e) {
-        console.log('❌ An error occurred while collecting automation log data.');
+        console.log('❌ An error occurred while collecting automation log data.', e);
       }
     }
     await page.evaluate(() => {
@@ -174,7 +174,7 @@ automationCount: number,
         }),
       );
     } catch(e) {
-      console.log('❌ An error occurred while generating a new export file.');
+      console.log('❌ An error occurred while generating a new export file.', e);
     }
   }
 
@@ -207,7 +207,7 @@ automationCount: number,
         }
       }
     } catch (e) {
-      console.log('❌ An error occurred while trying to run automation flows.');
+      console.log('❌ An error occurred while trying to run automation flows.', e);
     }
   }
 

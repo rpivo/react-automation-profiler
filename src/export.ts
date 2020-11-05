@@ -1,5 +1,5 @@
 #!/usr/bin/env node --no-warnings
-import fs from 'fs';
+import fs from 'fs/promises';
 import jsdom from 'jsdom';
 
 import { fileURLToPath } from 'url';

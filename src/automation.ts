@@ -1,5 +1,5 @@
 import express from 'express';
-import fs from 'fs';
+import fs from 'fs/promises';
 import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
@@ -28,40 +28,37 @@ automationCount: number,
 
   async function appendJsonToHTML() {
     const { JSDOM } = jsdom;
-    const contents = await fs.readFileSync(`${packagePath}/index.html`, 'utf8');
-    const { document } = new JSDOM(`${contents}`).window;
+    try {
+      const contents = await fs.readFile(`${packagePath}/index.html`, 'utf8');
+      const { document } = new JSDOM(`${contents}`).window;
+      document.querySelectorAll('.json')?.forEach(item => item.remove());
 
-    document.querySelectorAll('.json')?.forEach(item => item.remove());
-
-    const files = fs.readdirSync(packagePath);
-    for (const file of files) {
-      if (file.includes('.json')) {
-        const jsonContents = await fs.readFileSync(`${packagePath}/${file}`, 'utf8');
-        const jsonScript = document.createElement('script');
-
-        const idArr = file.split('-');
-        jsonScript.id = averageOf > 1 ? `${idArr[1]}-${idArr[2]}` : `${idArr[0]}-${idArr[1]}`;
-        jsonScript.classList.add('json');
-        jsonScript.type ='application/json';
-
-        jsonScript.innerHTML = jsonContents;
-        document.body.appendChild(jsonScript);
+      const files = await fs.readdir(packagePath);
+      for (const file of files) {
+        if (file.includes('.json')) {
+          const jsonContents = await fs.readFile(`${packagePath}/${file}`, 'utf8'); //
+          const jsonScript = document.createElement('script');
+  
+          const idArr = file.split('-');
+          jsonScript.id = averageOf > 1 ? `${idArr[1]}-${idArr[2]}` : `${idArr[0]}-${idArr[1]}`;
+          jsonScript.classList.add('json');
+          jsonScript.type ='application/json';
+  
+          jsonScript.innerHTML = jsonContents;
+          document.body.appendChild(jsonScript);
+        }
       }
+
+      await fs.writeFile(`${packagePath}/index.html`, document.documentElement.outerHTML);
+      await generateExport(document);
+    } catch(e) {
+      console.log('❌ Could not append JSON data to HTML file.');
     }
-
-    await fs.writeFile(
-      `${packagePath}/index.html`,
-      document.documentElement.outerHTML,
-      async err => {
-        if (err) throw err;
-        await generateExport(document);
-      }
-    );
   }
 
   async function calculateAverage() {
-    await fs.readdir(packagePath, async (err, files) => {
-      if (err) throw err;
+    try {
+      const files = await fs.readdir(packagePath);
 
       const flows = new Set(
         files
@@ -71,9 +68,10 @@ automationCount: number,
       );
 
       for (const [i, flow] of [...flows].entries()) {
-        const flowFiles =
-          files.filter(file => !file.includes('average-') && file.includes(`${flow}-`));
-        let sumNumberOfInteractions = 0;
+        const flowFiles = files.filter(
+          file => !file.includes('average-') && file.includes(`${flow}-`)
+        );
+
         const sumLogs: {
           actualDuration: number;
           baseDuration: number;
@@ -84,8 +82,10 @@ automationCount: number,
           startTime: number;
         }[] = [];
 
+        let sumNumberOfInteractions = 0;
+
         for (const file of flowFiles) {
-          const contents = await JSON.parse(fs.readFileSync(`${packagePath}/${file}`, 'utf8'));
+          const contents = JSON.parse(await fs.readFile(`${packagePath}/${file}`, 'utf8'));
           const { logs } = contents;
 
           for (const [index, log] of logs.entries()) {
@@ -106,11 +106,10 @@ automationCount: number,
             if (!sumLogs[index].id) sumLogs[index].id = log.id;
             if (!sumLogs[index].phase) sumLogs[index].phase = log.phase;
           }
+
           sumNumberOfInteractions += contents.numberOfInteractions;
 
-          await fs.unlink(`${packagePath}/${file}`, err => {
-            if (err) throw err;
-          });
+          await fs.unlink(`${packagePath}/${file}`);
         }
 
         const averagedData = {
@@ -125,17 +124,16 @@ automationCount: number,
           })),
           numberOfInteractions: sumNumberOfInteractions / averageOf,
         };
-
         await fs.writeFile(
           `${packagePath}/average-${flow}${getFileName()}`,
           JSON.stringify(averagedData),
-          async err => {
-            if (err) throw err;
-            if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
-          }
         );
+        
+        if (averageOf === automationCount && i === flows.size - 1) await appendJsonToHTML();
       }
-    });
+    } catch(e) {
+      console.log('❌ An error occurred while calculating averages.');
+    }
   }
 
   async function collectLogs({ label, numberOfInteractions = 0 }: {
@@ -146,13 +144,15 @@ automationCount: number,
       const logs = await page.evaluate(() => window.profiler);
       const fileName = getFileName(label);
       if (logs.length === 0) return false;
-  
-      await fs.writeFile(
-        `${packagePath}/${fileName}`,
-        JSON.stringify({ logs, numberOfInteractions }), err => {
-          if (err) throw err;
-        },
-      );
+
+      try {
+        await fs.writeFile(
+          `${packagePath}/${fileName}`,
+          JSON.stringify({ logs, numberOfInteractions }),
+        );
+      } catch(e) {
+        console.log('❌ An error occurred while collecting automation log data.');
+      }
     }
     await page.evaluate(() => {
       window.profiler = [];
@@ -162,19 +162,20 @@ automationCount: number,
 
   async function generateExport(document: Document) {
     document.querySelector('#export')?.remove();
-    await fs.writeFile(
-      `${packagePath}/export.html`,
-      minify(document.documentElement.outerHTML, {
-        collapseBooleanAttributes: true,
-        collapseWhitespace: true,
-        minifyCSS: true,
-        minifyJS: true,
-        removeAttributeQuotes: true,
-      }),
-      async err => {
-        if (err) throw err;
-      }
-    );
+    try {
+      await fs.writeFile(
+        `${packagePath}/export.html`,
+        minify(document.documentElement.outerHTML, {
+          collapseBooleanAttributes: true,
+          collapseWhitespace: true,
+          minifyCSS: true,
+          minifyJS: true,
+          removeAttributeQuotes: true,
+        }),
+      );
+    } catch(e) {
+      console.log('❌ An error occurred while generating a new export file.');
+    }
   }
 
   async function handleActions(actions: string[]) {
@@ -186,7 +187,7 @@ automationCount: number,
 
   async function runFlows() {
     try {
-      const flows = yaml.safeLoad(fs.readFileSync(`${cwd}/react.automation.yml`, 'utf8')) as {
+      const flows = yaml.safeLoad(await fs.readFile(`${cwd}/react.automation.yml`, 'utf8')) as {
         [key: string]: string[];
       };
 
@@ -206,7 +207,7 @@ automationCount: number,
         }
       }
     } catch (e) {
-      console.log('react.automation yaml file wasn\'t found.');
+      console.log('❌ An error occurred while trying to run automation flows.');
     }
   }
 

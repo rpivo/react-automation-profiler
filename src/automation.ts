@@ -6,6 +6,10 @@ import yaml from 'js-yaml';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName, MessageTypes, printMessage } from './util.js';
 
+type Flows = {
+  [key: string]: string[];
+};
+
 type StringIndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
@@ -203,12 +207,20 @@ automationCount: number,
     }
   }
 
+  async function readAutomationFile() {
+    let flows;
+    try {
+      flows = yaml.safeLoad(await fs.readFile(`${cwd}/react.automation.yml`, 'utf8')) as Flows;
+      return flows;
+    } catch {
+      flows = yaml.safeLoad(await fs.readFile(`${cwd}/react.automation.yaml`, 'utf8')) as Flows;
+      return flows;
+    }
+  }
+
   async function runFlows() {
     try {
-      const flows = yaml.safeLoad(await fs.readFile(`${cwd}/react.automation.yml`, 'utf8')) as {
-        [key: string]: string[];
-      };
-
+      const flows = await readAutomationFile();
       if (flows) {
         const keys = Object.keys(flows);
         let attempts = 0;

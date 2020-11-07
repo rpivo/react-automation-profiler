@@ -232,13 +232,25 @@ automationCount: number,
           });
           if (!success) {
             if (attempts++ < 3) i -= 1;
-            else printMessage(NOTICE, { log: `Automation flow "${keys[i]}" did not produce any renders.\n` });
+            else printMessage(NOTICE, {
+              log: `Automation flow "${keys[i]}" did not produce any renders.\n`,
+            });
           }
         }
       }
     } catch(e) {
-      errorMessage = 'An error occurred while trying to run automation flows.';
-      printMessage(ERROR, { e, log: errorMessage });
+      const isErrorObjectEmpty = Object.keys(e).length === 0;
+      const description = isErrorObjectEmpty &&
+        ` This was likely caused by one of these issues:
+        - The react.automation YAML file could not be found at the root of your repo.
+        - The react.automation file is using a selector that does not exist.`;
+      errorMessage = `An error occurred while trying to run automation flows.${
+        description ? description : ''
+      }`;
+      printMessage(ERROR, {
+        e: isErrorObjectEmpty ? null : e,
+        log: errorMessage,
+      });
     }
   }
 
@@ -264,5 +276,7 @@ automationCount: number,
 
   if (!isServerReady) await startServer();
 
-  if (errorMessage) throw printMessage(ERROR, { log: 'Automation could not complete because of the above errors.' });
+  if (errorMessage) throw printMessage(ERROR, {
+    log: 'Automation could not complete because of the above errors.',
+  });
 }

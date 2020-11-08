@@ -118,7 +118,6 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
       'nodemon',
       '--delay', '10000ms',
       '--ext', 'js,ts,jsx,tsx',
-      '--on-change-only',
       '--quiet',
       '--watch', `${cwd}/${watch}`,
       `${packagePath}/watch.js`,

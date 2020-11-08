@@ -271,8 +271,8 @@ automationCount: number,
   await runFlows();
   await browser.close();
 
-  if (averageOf === automationCount) await calculateAverage();
-  if (averageOf === 1) await appendJsonToHTML();
+  if (averageOf > 1 && automationCount === averageOf) await calculateAverage();
+  else if (averageOf === 1) await appendJsonToHTML();
 
   if (!isServerReady) await startServer();
 

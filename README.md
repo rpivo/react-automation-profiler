@@ -88,6 +88,12 @@ There are currently three **action types** that can be used in **react.automatio
 - `focus`
 - `hover`
 
+Note that `#` marks the beginning of a comment in YAML, so the HTML tag should always prefix an isolated `id`:
+
+```yaml
+- click button#cta
+```
+
 > **Note**: The automation flows will run one after another in the order they are listed in the automation file. No subsequent page loads happen between each flow.
 
 ## CLI: Generating Charts

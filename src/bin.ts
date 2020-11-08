@@ -94,8 +94,8 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
   async function handleAutomation() {
     for (let automationCount = 1; automationCount <= averageOf; automationCount++) {
-      if (!isServerReady && automationCount > 1) isServerReady = true;
       await runAutomation(automationOptions, isServerReady, automationCount);
+      if (!isServerReady && automationCount === averageOf) isServerReady = true;
     }
   }
 

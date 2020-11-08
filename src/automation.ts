@@ -274,7 +274,7 @@ automationCount: number,
   if (averageOf > 1 && automationCount === averageOf) await calculateAverage();
   else if (averageOf === 1) await appendJsonToHTML();
 
-  if (!isServerReady) await startServer();
+  if (!isServerReady && automationCount === averageOf) await startServer();
 
   if (errorMessage) throw printMessage(ERROR, {
     log: 'Automation could not complete because of the above errors.',

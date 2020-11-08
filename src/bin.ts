@@ -158,7 +158,5 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
     setupProxy();
     printMessage(AUTOMATION_STOP, { log: getStopMessage() });
-
-    browserSync.emitter.on('client:connected', () => process.exit());
   }
 })();

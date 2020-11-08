@@ -106,7 +106,7 @@ export function createCarousel(carouselId: string) {
   return carouselEl;
 }
 
-export function createSVG(id: number) {
+export function createSVG(id: string) {
   const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svgEl.setAttribute('id', `chart-${id}`);
   svgEl.setAttribute('height', '575');

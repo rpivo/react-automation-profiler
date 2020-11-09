@@ -119,7 +119,7 @@ const {
 
     const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;
 
-    const potentialWidth = (~~(data.length / 10) * 875) + (Math.abs((longestId - 5)) * 150) - 1000;
+    const potentialWidth = (~~(data.length / 10) * 875) + (Math.abs((longestId - 5)) * 175) - 1000;
     width = potentialWidth > 1000 ? potentialWidth : 1000;
     const potentialBodyWidth = width + 600;
     if (bodyWidth < potentialBodyWidth) bodyWidth = potentialBodyWidth;

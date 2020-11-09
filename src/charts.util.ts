@@ -44,10 +44,9 @@ export enum ParagraphMap {
 export const paragraphs: { [key in ParagraphMap]?: string } = {
   [ParagraphMap.ACTUAL_DURATION]:
     ` The total time it actually took the component and its subtree to render. This should \
-      ideally be lower than Base Duration after successive renders if memoization techniques are \
-      in place.`,
+      ideally be lower after successive renders if memoization techniques are in place.`,
   [ParagraphMap.BASE_DURATION]:
-    ` The total time it normally would take the component and its subtree to render. This does not \
+    ` The estimated time it will take the component and its subtree to render. This does not \
       take into account memoization for the component and its children.`,
   [ParagraphMap.NUMBER_OF_INTERACTIONS]:
     ` The total number of page interactions that occurred during the automation flow.`,

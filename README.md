@@ -104,13 +104,13 @@ Note that `#` marks the beginning of a comment in YAML, so the HTML tag should a
 
 There are a few prerequisites before you can start generating charts:
 - `AutomationProfiler` must be wrapping at least one of your components.
-- A **react.automation.js** (or similar) file should be set up at the root of your repo.
+- A **react.automation.yaml** file should be set up at the root of your repo.
 - Your app should be running locally (ex: running at `http://localhost:8000/index.html`).
 
-After that, you can then call the `rap` command to generate charts:
+After that, you can then call the `rap` command in a separate terminal to start generating charts:
 
 ```sh
-npx rap --page=http://localhost:8000/index.html --watch=src
+npx rap --page=http://localhost:8000/index.html --watch=dist
 ```
 
 ## `rap` options
@@ -122,4 +122,4 @@ npx rap --page=http://localhost:8000/index.html --watch=src
 | changeInterval | number  | no       | 1       | rerun after n number of changes. Note that there is a cooldown of 10 seconds before another change is counted. This flag effectively does nothing without use of the `watch` flag.                                                                                                                                                                                                |
 | includeMount   | boolean | no       | false   | includes the initial `mount` phase renders that happen before any automation flows are initialized.                                                                                                                                                                                                                                                                               |
 | port           | number  | no       | 1235    | the port that charts will be displayed on.                                                                                                                                                                                                                                                                                                                                        |
-| watch          | string  | no       |         | rerun `rap` on any changes to the given build folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. Note that `watch` runs on a 10-second delay to allow the application's local development toolchain to finish building before re-running the automation against the new build. |
+| watch          | string  | no       |         | rerun `rap` on any changes to the given build folder (not source code folder). This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. Note that `watch` runs on a 10-second delay to allow the application's local development toolchain to finish building before re-running the automation against the new build. |

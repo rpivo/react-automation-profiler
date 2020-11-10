@@ -2,6 +2,12 @@
 
 Analyze your React app's renders with automated user flows that generate comparison charts. Run flows before and after major changes to see how it affects components and renders, or run them on every build.
 
+### What Can You Do?
+- Design user flows unique to your app that will automatically be run in the background
+- Rerun automation flows every time your codebase is built during development, or rerun after x number of builds
+- Easily export all generated charts into a single HTML file
+- TypeScript support
+
 To demo react-automation-profiler on an example app, check out [react-automation-profiler-example-app](https://github.com/rpivo/react-automation-profiler-example-app).
 
 ### Contents

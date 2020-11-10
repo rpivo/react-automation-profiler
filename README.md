@@ -87,7 +87,7 @@ In the file above, there are three keys that each represent a different automati
 
 In the example above, the first flow `Toggle PlayArea Card Active` has two actions: clicking the CSS selector `div.playArea div.card`, and then clicking the CSS selector `div.playArea`. This represents what a user would do when toggling a PlayArea Card's active state.
 
-There are currently three **action types** that can be used in **react.automation.js**:
+There are currently three **action types** that can be used in **react.automation.yaml**:
 - `click`
 - `focus`
 - `hover`

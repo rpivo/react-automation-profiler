@@ -1,6 +1,6 @@
 {
   "name": "react-automation-profiler",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Automated React profiling and data visualization using React's Profiler API, Puppeteer, and D3.",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -53,7 +53,7 @@
     "@types/express": "^4.17.8",
     "@types/html-minifier-terser": "^5.1.1",
     "@types/js-yaml": "^3.12.5",
-    "@types/jsdom": "^16.2.5",
+    "@types/jsdom": "^16.2.6",
     "@types/node": "^14.14.6",
     "@types/nodemon": "^1.19.0",
     "@types/puppeteer": "^5.4.0",

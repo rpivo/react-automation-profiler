@@ -9,8 +9,6 @@ Analyze your React app's renders with automated user flows that generate compari
 - Export all generated charts into a single HTML file
 - TypeScript support
 
-To demo react-automation-profiler on an example app, check out [react-automation-profiler-example-app](https://github.com/rpivo/react-automation-profiler-example-app).
-
 ### Contents
 - [Install](#Install)
 - [Wrapping Components With AutomationProfiler](#Wrapping-Components-With-AutomationProfiler)

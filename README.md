@@ -1,6 +1,7 @@
 # react-automation-profiler
 
-https://img.shields.io/david/rpivo/react-automation-profiler?style=plastic
+<a alt="Dependencies">
+    <img src="https://img.shields.io/david/rpivo/react-automation-profiler?style=plastic" /></a>
 
 Analyze your React app's renders with automated user flows that generate comparison charts. Run flows before and after major changes to see how it effects components and renders, or run them on every build.
 

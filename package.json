@@ -34,6 +34,7 @@
   "scripts": {
     "build": "bash ./sh/build.sh",
     "diff": "bash ./sh/diff.sh",
+    "pack": "npm pack",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

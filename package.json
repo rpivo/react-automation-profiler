@@ -34,8 +34,7 @@
   "scripts": {
     "build": "bash ./sh/build.sh",
     "diff": "bash ./sh/diff.sh",
-    "prepublishOnly": "npm run build",
-    "update": "npx npm-check-updates -u"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "browser-sync": "^2.27.4",

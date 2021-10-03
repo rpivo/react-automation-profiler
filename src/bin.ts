@@ -8,6 +8,15 @@ import yargs from 'yargs';
 import runAutomation from './automation.js';
 import { MessageTypes, printMessage } from './util.js';
 
+interface Options {
+  averageOf: number,
+  changeInterval: number,
+  includeMount: boolean,
+  page: string,
+  port: number,
+  watch: string,
+}
+
 const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
 (async function() {
@@ -53,7 +62,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     page,
     port = 1235,
     watch = '',
-  } = options;
+  } = <Options>options;
 
   const cwd = path.resolve();
   const scriptPath = fileURLToPath(import.meta.url);
@@ -82,7 +91,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
       }
     } catch(e) {
-      printMessage(ERROR, { e, log: 'An error occurred while deleting JSON files.' });
+      printMessage(ERROR, { e: <Error>e, log: 'An error occurred while deleting JSON files.' });
     }
   }
 

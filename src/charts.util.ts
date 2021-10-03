@@ -159,11 +159,11 @@ export function handleMouseOver(name?: string, e?: MouseMoveEvent) {
     case RECT:
       const { key: keyString } = (e as MouseMoveEvent).target['__data__'];
       if (keyString) {
-        h4!.innerHTML = `${keyString}: ${paragraphs[keyString as ParagraphString]}`;
+        h4!.innerHTML = `${<string>keyString}: ${paragraphs[keyString as ParagraphString]}`;
         h4!.style.opacity = '1';
 
         const span = document.querySelector('#big-tooltip span');
-        span!.innerHTML = `${keyString}: ${(e as MouseMoveEvent).target['__data__'].value} ms`;
+        span!.innerHTML = `${<string>keyString}: ${(e as MouseMoveEvent).target['__data__'].value} ms`;
         (span as HTMLElement)!.style.opacity = '1';
       
         (e as MouseMoveEvent).target.style.outline = '1px solid white';

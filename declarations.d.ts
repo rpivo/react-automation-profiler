@@ -1,3 +1,5 @@
+import 'js-yaml';
+
 declare global {
   interface Window {
     profiler: {
@@ -23,4 +25,6 @@ declare global {
   };
 }
 
-export {};
+declare module 'js-yaml' {
+  export function safeLoad(str: string): any;
+}

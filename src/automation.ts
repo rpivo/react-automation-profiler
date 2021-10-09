@@ -67,7 +67,7 @@ automationCount: number,
       await generateExport(document);
     } catch(e) {
       errorMessage = 'Could not append JSON data to HTML file.';
-      printMessage(ERROR, { e, log: errorMessage });
+      printMessage(ERROR, { e: <Error>e, log: errorMessage });
     }
   }
 
@@ -148,7 +148,7 @@ automationCount: number,
       }
     } catch(e) {
       errorMessage = 'An error occurred while calculating averages.';
-      printMessage(ERROR, { e, log: errorMessage });
+      printMessage(ERROR, { e: <Error>e, log: errorMessage });
     }
   }
 
@@ -168,7 +168,7 @@ automationCount: number,
         );
       } catch(e) {
         errorMessage = 'An error occurred while collecting automation log data.';
-        printMessage(ERROR, { e, log: errorMessage });
+        printMessage(ERROR, { e: <Error>e, log: errorMessage });
       }
     }
     await page.evaluate(() => {
@@ -192,14 +192,18 @@ automationCount: number,
       );
     } catch(e) {
       errorMessage = 'An error occurred while generating a new export file.';
-      printMessage(ERROR, { e, log: errorMessage });
+      printMessage(ERROR, { e: <Error>e, log: errorMessage });
     }
   }
 
   async function handleActions(actions: string[]) {
     for (const action of actions) {
       const [actionType, ...selector] = action.split(' ');
-      if (actionType in Actions) await page[actionType](selector.join(' '));
+      if (actionType in Actions) {
+        const selectorStr = selector.join(' ');
+        await page.waitForSelector(selectorStr);
+        await page[actionType](selectorStr);
+      }
       else {
         errorMessage = 'One or more action types provided was not valid.';
         throw printMessage(ERROR, { log: errorMessage });
@@ -239,7 +243,7 @@ automationCount: number,
         }
       }
     } catch(e) {
-      const isErrorObjectEmpty = Object.keys(e).length === 0;
+      const isErrorObjectEmpty = Object.keys(<Error>e).length === 0;
       const description = isErrorObjectEmpty &&
         ` This was likely caused by one of these issues:
         - The react.automation YAML file could not be found at the root of your repo.
@@ -248,7 +252,7 @@ automationCount: number,
         description ? description : ''
       }`;
       printMessage(ERROR, {
-        e: isErrorObjectEmpty ? null : e,
+        e: isErrorObjectEmpty ? undefined : <Error>e,
         log: errorMessage,
       });
     }

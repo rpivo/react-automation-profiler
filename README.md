@@ -16,12 +16,40 @@ Analyze your React app's renders with automated user flows that generate compari
 
 ### Contents
 
+- [Try it out](#try-it-out)
 - [Install](#Install)
 - [Wrapping Components With AutomationProfiler](#Wrapping-Components-With-AutomationProfiler)
 - [Automation Flows](#Automation-Flows)
 - [CLI: Generating Charts](#CLI-Generating-Charts)
 - [`rap` options](#rap-options)
 
+## Try it out
+
+To try react-automation-profiler out:
+
+### Clone the repo
+
+```sh
+git clone git@github.com:rpivo/react-automation-profiler.git
+```
+
+### Start the example app
+
+This will install all dependencies and start the example app.
+
+```sh
+npm run example
+```
+
+### Start `rap`
+
+In a separate terminal:
+
+```sh
+npm run rap
+```
+
+This will start react-automation-profiler, which will run the automation flows inside example/react.automation.yaml and then generate render charts. These charts should automatically open in your browser once automation is complete.
 ## Install
 
 `npm i -D react-automation-profiler`

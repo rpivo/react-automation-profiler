@@ -1,0 +1,9 @@
+Click First Button:
+  - click .first-button
+Click Second Button:
+  - click .second-button
+  - click .second-button
+Click Third Button:
+  - click .third-button
+  - click .third-button
+  - click .third-button

@@ -23,6 +23,6 @@ import { MessageTypes, printMessage } from './util.js';
   
     await fs.writeFile(`${path}/index.html`, document.documentElement.outerHTML);
   } catch(e) {
-    printMessage(MessageTypes.ERROR, { e, log: 'An error occurred while appending charts.js to index.html.' });
+    printMessage(MessageTypes.ERROR, { e: <Error>e, log: 'An error occurred while appending charts.js to index.html.' });
   }
 })();

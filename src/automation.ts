@@ -199,7 +199,11 @@ automationCount: number,
   async function handleActions(actions: string[]) {
     for (const action of actions) {
       const [actionType, ...selector] = action.split(' ');
-      if (actionType in Actions) await page[actionType](selector.join(' '));
+      if (actionType in Actions) {
+        const selectorStr = selector.join(' ');
+        await page.waitForSelector(selectorStr);
+        await page[actionType](selectorStr);
+      }
       else {
         errorMessage = 'One or more action types provided was not valid.';
         throw printMessage(ERROR, { log: errorMessage });

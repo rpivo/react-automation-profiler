@@ -33,9 +33,12 @@
   "homepage": "https://github.com/rpivo/react-automation-profiler#readme",
   "scripts": {
     "build": "bash ./sh/build.sh",
+    "clean": "bash ./sh/clean.sh",
+    "example": "bash ./sh/example.sh",
     "diff": "bash ./sh/diff.sh",
     "pack": "npm pack",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "rap": "cd example && npx rap --page=http://localhost:3000/index.html"
   },
   "dependencies": {
     "browser-sync": "^2.27.4",

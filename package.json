@@ -4,6 +4,10 @@
   "description": "Automated React profiling and data visualization using React's Profiler API, Puppeteer, and D3.",
   "main": "lib/index.js",
   "module": "lib/index.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "engineStrict": true,
   "files": [
     "lib",
     "README.md"

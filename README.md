@@ -1,6 +1,9 @@
 # react-automation-profiler
 
-<img src="https://1wgkxk0rgg.execute-api.us-east-1.amazonaws.com/production/last-published/react-automation-profiler" />
+<p align="middle" float="left">
+  <img src="https://1wgkxk0rgg.execute-api.us-east-1.amazonaws.com/production/last-published/react-automation-profiler" />
+  <img src="https://1wgkxk0rgg.execute-api.us-east-1.amazonaws.com/production/latest-version/react-automation-profiler" />
+</p>
 
 Analyze your React app's renders with automated user flows that generate comparison charts. Run flows before and after major changes to see how it effects components and renders, or run them on every build.
 

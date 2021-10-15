@@ -6,6 +6,19 @@ import yaml from 'js-yaml';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName, MessageTypes, printMessage } from './util.js';
 
+declare module 'js-yaml' {
+  export function safeLoad(str: string): any;
+}
+
+interface AutomationProps {
+  averageOf: number;
+  cwd: string;
+  includeMount: boolean;
+  packagePath: string;
+  serverPort: number;
+  url: string;
+};
+
 type Flows = {
   [key: string]: string[];
 };

@@ -1,28 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { AutomationProfiler } from "react-automation-profiler";
-import "./index.css";
-
-function Button({ children, className }) {
-  const [count, setCount] = React.useState(0);
-  return (
-    <button
-      className={className}
-      onClick={() => setCount(count + 1)}
-      style={{ margin: "1rem" }}
-    >
-      {children}
-    </button>
-  );
-}
+import { Authentication, ThreeButtons } from "./views";
+import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
-    <AutomationProfiler id="p-app">
-      <Button className="first-button">Click me once!</Button>
-      <Button className="second-button">Click me twice!</Button>
-      <Button className="third-button">Click me thrice!</Button>
-    </AutomationProfiler>
+    <main style={{ padding: "5rem" }}>
+      <Router>
+        <Route exact path="/">
+          <Redirect to="three-buttons" />
+        </Route>
+        <Route path="/authentication">
+          <Authentication />
+        </Route>
+        <Route path="/three-buttons">
+          <ThreeButtons />
+        </Route>
+      </Router>
+    </main>
   </React.StrictMode>,
   document.getElementById("root")
 );

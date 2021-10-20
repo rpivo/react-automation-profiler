@@ -75,16 +75,6 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
   let isProxyReady = false;
   let isServerReady = false;
 
-  const automationOptions = {
-    averageOf,
-    cwd,
-    includeMount,
-    packagePath,
-    serverPort: port + 1,
-    serverPath,
-    url: page,
-  };
-
   async function deleteJsonFiles() {
     try {
       const files = await fs.readdir(packagePath);
@@ -112,7 +102,16 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
       automationCount <= averageOf;
       automationCount++
     ) {
-      await runAutomation(automationOptions, isServerReady, automationCount);
+      await runAutomation({
+        automationCount,
+        averageOf,
+        cwd,
+        includeMount,
+        isServerReady,
+        packagePath,
+        serverPort: port + 1,
+        url: page,
+      });
       if (!isServerReady && automationCount === averageOf) isServerReady = true;
     }
   }

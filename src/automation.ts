@@ -11,9 +11,11 @@ declare module 'js-yaml' {
 }
 
 interface AutomationProps {
+  automationCount: number;
   averageOf: number;
   cwd: string;
   includeMount: boolean;
+  isServerReady: boolean;
   packagePath: string;
   serverPort: number;
   url: string;
@@ -35,18 +37,16 @@ enum Actions {
 
 const { ERROR, NOTICE } = MessageTypes;
 
-export default async function (
-  {
-    averageOf,
-    cwd,
-    includeMount,
-    packagePath,
-    serverPort,
-    url,
-  }: AutomationProps,
-  isServerReady: boolean,
-  automationCount: number
-) {
+export default async function ({
+  automationCount,
+  averageOf,
+  cwd,
+  includeMount,
+  isServerReady,
+  packagePath,
+  serverPort,
+  url,
+}: AutomationProps) {
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();

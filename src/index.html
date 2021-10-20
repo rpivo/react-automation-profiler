@@ -1,151 +1,149 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React Automation Profiler</title>
+    <style>
+      body {
+        background: #333;
+        color: #fff;
+        font-family: Arial;
+        font-weight: lighter;
+        margin: 0 auto;
+        margin-bottom: 25px;
+      }
 
-<head>
-  <meta charset='utf-8'>
-  <title>React Automation Profiler</title>
-  <style>
-    body {
-      background: #333;
-      color: #FFF;
-      font-family: Arial;
-      font-weight: lighter;
-      margin: 0 auto;
-      margin-bottom: 25px;
-    }
+      div.arrow {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: #888;
+      }
 
-    div.arrow {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      color: #888;
-    }
+      div.arrow:hover {
+        color: #52c9f2;
+      }
 
-    div.arrow:hover {
-      color: #52C9F2;
-    }
+      div.arrow-wrapper {
+        bottom: 10px;
+        cursor: pointer;
+        display: flex;
+        font-size: 18px;
+        font-weight: lighter;
+        height: 25px;
+        width: 150px;
+        justify-content: space-between;
+        position: absolute;
+      }
 
-    div.arrow-wrapper {
-      bottom: 10px;
-      cursor: pointer;
-      display: flex;
-      font-size: 18px;
-      font-weight: lighter;
-      height: 25px;
-      width: 150px;
-      justify-content: space-between;
-      position: absolute;
-    }
+      div.carousel {
+        display: flex;
+        height: 575px;
+        justify-content: center;
+        margin: 0 auto;
+        padding: 25px;
+        position: relative;
+      }
 
-    div.carousel {
-      display: flex;
-      height: 575px;
-      justify-content: center;
-      margin: 0 auto;
-      padding: 25px;
-      position: relative;
-    }
+      div#export {
+        border: 1px solid #56a6fc;
+        border-radius: 4px;
+        bottom: 25px;
+        font-size: 14px;
+        right: 25px;
+        color: #56a6fc;
+        cursor: pointer;
+        padding: 5px;
+        position: fixed;
+        z-index: 100;
+      }
 
-    div#export {
-      border: 1px solid #56A6FC;
-      border-radius: 4px;
-      bottom: 25px;
-      font-size: 14px;
-      right: 25px;
-      color: #56A6FC;
-      cursor: pointer;
-      padding: 5px;
-      position: fixed;
-      z-index: 100;
-    }
+      div#export:hover {
+        background: white;
+        border: 1px solid white;
+        color: #333;
+      }
 
-    div#export:hover {
-      background: white;
-      border: 1px solid white;
-      color: #333;
-    }
+      h2,
+      h3,
+      h4,
+      h5 {
+        font-weight: lighter;
+      }
 
-    h2,
-    h3,
-    h4,
-    h5 {
-      font-weight: lighter;
-    }
+      h2 {
+        bottom: 25px;
+        font-size: 20px;
+        font-weight: lighter;
+        position: absolute;
+        text-align: center;
+      }
 
-    h2 {
-      bottom: 25px;
-      font-size: 20px;
-      font-weight: lighter;
-      position: absolute;
-      text-align: center;
-    }
+      h3 {
+        font-size: 16px;
+        margin-top: -30px;
+        position: fixed;
+        z-index: 1000;
+      }
 
-    h3 {
-      font-size: 16px;
-      margin-top: -30px;
-      position: fixed;
-      z-index: 1000;
-    }
+      h4 {
+        font-size: 11px;
+        bottom: 25px;
+        left: 25px;
+        margin: 0;
+        position: fixed;
+        opacity: 0;
+        width: 275px;
+        z-index: 1000;
+      }
 
-    h4 {
-      font-size: 11px;
-      bottom: 25px;
-      left: 25px;
-      margin: 0;
-      position: fixed;
-      opacity: 0;
-      width: 275px;
-      z-index: 1000;
-    }
+      h5 {
+        margin: 0;
+      }
 
-    h5 {
-      margin: 0;
-    }
+      rect {
+        cursor: pointer;
+      }
 
-    rect {
-      cursor: pointer;
-    }
+      span {
+        background: #373;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        border-radius: 3px;
+        padding: 5px;
+        opacity: 0;
+      }
 
-    span {
-      background: #373;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-      border-radius: 3px;
-      padding: 5px;
-      opacity: 0;
-    }
+      svg {
+        position: absolute;
+      }
 
-    svg {
-      position: absolute;
-    }
+      svg.hidden {
+        display: none;
+      }
 
-    svg.hidden {
-      display: none;
-    }
+      text {
+        fill: #fff;
+      }
 
-    text {
-      fill: #FFF;
-    }
+      text.interactions,
+      text.total {
+        cursor: pointer;
+      }
 
-    text.interactions,
-    text.total {
-      cursor: pointer;
-    }
+      text.interactions:hover,
+      text.total:hover {
+        text-decoration: underline;
+        fill: #fff;
+      }
+    </style>
+  </head>
 
-    text.interactions:hover,
-    text.total:hover {
-      text-decoration: underline;
-      fill: #FFF;
-    }
-  </style>
-</head>
-
-<body>
-  <h3 id='big-tooltip'><span></span></h3>
-  <h4></h4>
-  <div id='export'>Export</div>
-</body>
-
+  <body>
+    <h3 id="big-tooltip"><span></span></h3>
+    <h4></h4>
+    <div id="export">Export</div>
+  </body>
 </html>

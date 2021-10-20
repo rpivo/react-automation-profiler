@@ -13,7 +13,7 @@ import {
 } from './charts.util';
 
 type Columns = {
-  columns: ['Render', typeof BASE_DURATION, typeof ACTUAL_DURATION,];
+  columns: ['Render', typeof BASE_DURATION, typeof ACTUAL_DURATION];
 };
 
 type Item = {
@@ -38,16 +38,16 @@ const {
   TOTAL_AUTOMATION_TIME_ELAPSED,
 } = ParagraphMap;
 
-(async function() {
+(async function () {
   const height = 500;
   let width = 1000;
   let bodyWidth = 0;
-  const margin = ({
+  const margin = {
     bottom: 20,
     left: 40,
     right: 10,
     top: 10,
-  });
+  };
 
   const allJsonValues: number[] = [];
   const carouselIds = [];
@@ -55,12 +55,14 @@ const {
   const itemIdLengths: number[] = [];
   const jsonIDs: string[] = [];
 
-  d3.select('html').on('mousemove', e => updateTooltipPosition(e as MouseEvent));
+  d3.select('html').on('mousemove', (e) =>
+    updateTooltipPosition(e as MouseEvent)
+  );
 
   const jsonFiles = document.querySelectorAll('.json');
   const jsonMap = new Map();
 
-  jsonFiles.forEach(file => {
+  jsonFiles.forEach((file) => {
     const contents = JSON.parse(file.innerHTML);
     const id = file.id;
 
@@ -73,7 +75,10 @@ const {
 
       item.Render = `${index + 1}: ${item.id}`;
 
-      allJsonValues.push((item[ACTUAL_DURATION] as number), (item[BASE_DURATION] as number));
+      allJsonValues.push(
+        item[ACTUAL_DURATION] as number,
+        item[BASE_DURATION] as number
+      );
       itemIdLengths.push(item!.id!.length);
 
       delete item.actualDuration;
@@ -89,7 +94,7 @@ const {
 
   const longestId = Math.max(...itemIdLengths);
   const tallestRect = Math.max(...allJsonValues);
-  const scaleMax = Math.round((tallestRect + (tallestRect * 0.05)) * 10) / 10;
+  const scaleMax = Math.round((tallestRect + tallestRect * 0.05) * 10) / 10;
 
   for (const [key, value] of jsonMap.entries()) {
     const [singularId, multipleId] = key.split('-');
@@ -113,13 +118,15 @@ const {
     const svgEl = createSVG(key);
     carouselEl.appendChild(svgEl);
 
-    const data = Object.assign(
-      value, { columns: ['Render', BASE_DURATION, ACTUAL_DURATION] },
-    ) as Item[] & Columns;
+    const data = Object.assign(value, {
+      columns: ['Render', BASE_DURATION, ACTUAL_DURATION],
+    }) as Item[] & Columns;
 
-    const totalTimeElapsed = data[data.length - 1].commitTime - data[0].startTime;
+    const totalTimeElapsed =
+      data[data.length - 1].commitTime - data[0].startTime;
 
-    const potentialWidth = (~~(data.length / 10) * 875) + (Math.abs((longestId - 5)) * 175) - 1000;
+    const potentialWidth =
+      ~~(data.length / 10) * 875 + Math.abs(longestId - 5) * 175 - 1000;
     width = potentialWidth > 1000 ? potentialWidth : 1000;
     const potentialBodyWidth = width + 600;
     if (bodyWidth < potentialBodyWidth) bodyWidth = potentialBodyWidth;
@@ -145,7 +152,7 @@ const {
         .attr('x', -19)
         .attr('width', 19)
         .attr('height', 19)
-        .attr('fill', (color as unknown as string));
+        .attr('fill', color as unknown as string);
 
       g.append('text')
         .attr('x', -24)
@@ -154,46 +161,65 @@ const {
         .text((d: any) => d);
     };
 
-    const xAxis = (g: d3.Selection<any, d3.Axis<d3.NumberValue>, HTMLElement, any>) => g
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x0).tickSizeOuter(0))
-      .call(g => g.select('.domain').remove());
+    const xAxis = (
+      g: d3.Selection<any, d3.Axis<d3.NumberValue>, HTMLElement, any>
+    ) =>
+      g
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x0).tickSizeOuter(0))
+        .call((g) => g.select('.domain').remove());
 
-    const yAxis = (g: any) => g
-      .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).ticks(null, 's'))
-      .call((g: d3.Selection<SVGElement, {}, HTMLElement, any>) => g.select('.domain').remove())
-      .call((g: d3.Selection<SVGElement, {}, HTMLElement, any>) =>
-        g.select('.tick:last-of-type text').clone()
-        .attr('x', 3)
-        .attr('text-anchor', 'start')
-        .attr('font-weight', 'bold')
-        .text('Milliseconds'));
+    const yAxis = (g: any) =>
+      g
+        .attr('transform', `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(null, 's'))
+        .call((g: d3.Selection<SVGElement, {}, HTMLElement, any>) =>
+          g.select('.domain').remove()
+        )
+        .call((g: d3.Selection<SVGElement, {}, HTMLElement, any>) =>
+          g
+            .select('.tick:last-of-type text')
+            .clone()
+            .attr('x', 3)
+            .attr('text-anchor', 'start')
+            .attr('font-weight', 'bold')
+            .text('Milliseconds')
+        );
 
-    const x0 = d3.scaleBand()
-      .domain(data.map(d => d['Render']!))
+    const x0 = d3
+      .scaleBand()
+      .domain(data.map((d) => d['Render']!))
       .rangeRound([margin.left, width - margin.right])
       .paddingInner(0.1);
 
-    const x1 = d3.scaleBand()
+    const x1 = d3
+      .scaleBand()
       .domain(keys)
       .rangeRound([0, x0.bandwidth()])
       .padding(0.05);
 
-    const y = d3.scaleLinear()
-      .domain([0, scaleMax]).nice()
+    const y = d3
+      .scaleLinear()
+      .domain([0, scaleMax])
+      .nice()
       .rangeRound([height - margin.bottom, margin.top]);
 
     const chart = () => {
-      const svg = d3.select(`#chart-${key}`) as d3.Selection<any, any, any, any>;
+      const svg = d3.select(`#chart-${key}`) as d3.Selection<
+        any,
+        any,
+        any,
+        any
+      >;
 
-      (svg as any).append('g')
+      (svg as any)
+        .append('g')
         .selectAll('g')
         .data(data)
         .join('g')
         .attr('transform', (d: Item) => `translate(${x0(d[groupKey]!)},0)`)
         .selectAll('rect')
-        .data((d: Item) => keys.map(key => ({ key, value: d[key] })))
+        .data((d: Item) => keys.map((key) => ({ key, value: d[key] })))
         .join('rect')
         .attr('x', (d: any) => x1(d.key))
         .attr('y', (d: any) => y(d.value))
@@ -201,49 +227,58 @@ const {
         .attr('height', (d: any) => y(0)! - y(d.value)!)
         .attr('fill', (d: any) => color(d.key));
 
-      svg.append('g')
-        .call(xAxis);
+      svg.append('g').call(xAxis);
 
-      svg.append('g')
-        .call(yAxis);
+      svg.append('g').call(yAxis);
 
-      svg.append('g')
-        .call(legend);
+      svg.append('g').call(legend);
 
-      svg.append('text')
+      svg
+        .append('text')
         .attr('transform', `translate(45,${height - margin.bottom + 35})`)
         .attr('text-align', 'start')
         .attr('font-size', '11')
         .attr('font-weight', 'bold')
         .text('Renders');
 
-      svg.append('text')
-        .attr('transform', `translate(${width - 12},${height - margin.bottom + 35})`)
+      svg
+        .append('text')
+        .attr(
+          'transform',
+          `translate(${width - 12},${height - margin.bottom + 35})`
+        )
         .attr('text-anchor', 'end')
         .attr('font-size', '11')
         .attr('font-weight', 'bold')
         .attr('class', 'total')
         .text(`${TOTAL_AUTOMATION_TIME_ELAPSED}: ${totalTimeElapsed} ms`);
 
-      svg.append('text')
-        .attr('transform', `translate(${width - 12},${height - margin.bottom + 55})`)
+      svg
+        .append('text')
+        .attr(
+          'transform',
+          `translate(${width - 12},${height - margin.bottom + 55})`
+        )
         .attr('text-anchor', 'end')
         .attr('font-size', '11')
         .attr('font-weight', 'bold')
         .attr('class', 'interactions')
         .text(`${NUMBER_OF_INTERACTIONS}: ${interactions.shift()}`);
 
-      svg.select('.total')
+      svg
+        .select('.total')
         .on('mouseover', () => handleMouseOver(TOTAL))
         .on('mouseout', () => handleMouseOut());
 
-      svg.select('.interactions')
+      svg
+        .select('.interactions')
         .on('mouseover', () => handleMouseOver(INTERACTIONS))
         .on('mouseout', () => handleMouseOut());
 
-      svg.selectAll('rect')
-        .on('mouseover', e => handleMouseOver(RECT, e as MouseMoveEvent))
-        .on('mouseout', e => handleMouseOut(e as MouseMoveEvent));
+      svg
+        .selectAll('rect')
+        .on('mouseover', (e) => handleMouseOver(RECT, e as MouseMoveEvent))
+        .on('mouseout', (e) => handleMouseOut(e as MouseMoveEvent));
 
       return svg.node();
     };

@@ -1,11 +1,11 @@
-import React from "react";
-import { AutomationProfiler } from "react-automation-profiler";
+import React from 'react';
+import { AutomationProfiler } from 'react-automation-profiler';
 import {
   ExampleBox,
   ExampleDescription,
   ExampleDivider,
   ExampleHeading,
-} from "../components";
+} from '../components';
 
 export default function ThreeButtons() {
   return (

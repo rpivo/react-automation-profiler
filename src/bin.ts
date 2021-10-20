@@ -102,6 +102,8 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
       automationCount <= averageOf;
       automationCount++
     ) {
+      printMessage(AUTOMATION_START);
+
       await runAutomation({
         automationCount,
         averageOf,
@@ -112,6 +114,9 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         serverPort: port + 1,
         url: page,
       });
+
+      printMessage(AUTOMATION_STOP, { log: getStopMessage() });
+
       if (!isServerReady && automationCount === averageOf) isServerReady = true;
     }
   }
@@ -152,8 +157,6 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         event.type === 'exit' &&
         (++changeCount === changeInterval || !isServerReady)
       ) {
-        printMessage(AUTOMATION_START);
-
         try {
           await handleAutomation();
         } catch {
@@ -168,13 +171,10 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         } else {
           browserSync.reload();
         }
-
-        printMessage(AUTOMATION_STOP, { log: getStopMessage() });
       }
     });
     nodemon.on('quit', () => process.exit());
   } else {
-    printMessage(AUTOMATION_START);
 
     try {
       await handleAutomation();
@@ -183,6 +183,5 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     }
 
     setupProxy();
-    printMessage(AUTOMATION_STOP, { log: getStopMessage() });
   }
 })();

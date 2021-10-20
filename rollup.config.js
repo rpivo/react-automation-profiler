@@ -7,8 +7,5 @@ export default {
     dir: 'lib',
     format: 'esm',
   },
-  plugins: [
-    nodeResolve(),
-    typescript(),
-  ],
+  plugins: [nodeResolve(), typescript()],
 };

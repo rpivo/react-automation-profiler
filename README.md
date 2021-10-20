@@ -51,6 +51,7 @@ npm run rap
 ```
 
 This will start react-automation-profiler, which will run the automation flows inside example/react.automation.yaml and then generate render charts. These charts should automatically open in your browser once automation is complete.
+
 ## Install
 
 `npm i -D react-automation-profiler`
@@ -66,23 +67,23 @@ To profile specific component trees, import the `AutomationProfiler` component f
 You can wrap your whole application in your index file:
 
 ```tsx
-import React from "react";
-import { render } from "react-dom";
-import App from "components/App";
-import { AutomationProfiler } from "react-automation-profiler";
+import React from 'react';
+import { render } from 'react-dom';
+import App from 'components/App';
+import { AutomationProfiler } from 'react-automation-profiler';
 
 render(
   <AutomationProfiler id="p-app">
     <App />
   </AutomationProfiler>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 ```
 
 Or, you can wrap deeply nested components:
 
 ```tsx
-import React from "react";
+import React from 'react';
 
 export default () => (
   <AutomationProfiler id="p-card">

@@ -7,15 +7,18 @@ export enum MessageTypes {
 
 function formatLabel(label: string) {
   return label
-  .toLowerCase()
-  .split(' ')
-  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-  .join('');
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
 }
 
 export function getFileName(label?: string, extension: string = 'json') {
-  return `${hyphenateString(`${label ? formatLabel(label) : ''}${extension === 'json' ? `-${
-    Date.now()}` : ''}-${new Date().toLocaleString()}`)}.${extension}`;
+  return `${hyphenateString(
+    `${label ? formatLabel(label) : ''}${
+      extension === 'json' ? `-${Date.now()}` : ''
+    }-${new Date().toLocaleString()}`
+  )}.${extension}`;
 }
 
 function hyphenateString(str: string) {
@@ -26,13 +29,16 @@ function hyphenateString(str: string) {
     .replace(/-$/, '');
 }
 
-export function printMessage(messageType: string, params?: {
-  e?: Error;
-  log?: string;
-}) {
+export function printMessage(
+  messageType: string,
+  params?: {
+    e?: Error;
+    log?: string;
+  }
+) {
   let message: string = '';
 
-  switch(messageType) {
+  switch (messageType) {
     case MessageTypes.AUTOMATION_START: {
       message = '\n🛠  preparing automation...\n';
       break;
@@ -44,7 +50,7 @@ export function printMessage(messageType: string, params?: {
     }
     case MessageTypes.ERROR: {
       const { e = null, log } = params!;
-      message = `❌ ${log}${ e ? `: ${JSON.stringify(e)}` : '' }\n`;
+      message = `❌ ${log}${e ? `: ${JSON.stringify(e)}` : ''}\n`;
       break;
     }
     case MessageTypes.NOTICE: {

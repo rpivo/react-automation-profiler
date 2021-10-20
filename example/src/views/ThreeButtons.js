@@ -1,13 +1,13 @@
-import React from "react";
-import { AutomationProfiler } from "react-automation-profiler";
-import { Button, ButtonGroup, Typography } from "@mui/material";
+import React from 'react';
+import { AutomationProfiler } from 'react-automation-profiler';
+import { Button, ButtonGroup, Typography } from '@mui/material';
 import {
   ExampleBox,
   ExampleDescription,
   ExampleDivider,
   ExampleHeading,
   ExampleWidget,
-} from "../components";
+} from '../components';
 
 export default function ThreeButtons() {
   const [count, setCount] = React.useState(0);
@@ -42,7 +42,7 @@ export default function ThreeButtons() {
             </Button>
           </ButtonGroup>
         </ExampleWidget>
-        <Typography variant="h4" style={{ textAlign: "center" }}>
+        <Typography variant="h4" style={{ textAlign: 'center' }}>
           {count}
         </Typography>
       </ExampleBox>

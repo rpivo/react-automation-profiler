@@ -9,25 +9,27 @@ import runAutomation from './automation.js';
 import { MessageTypes, printMessage } from './util.js';
 
 interface Options {
-  averageOf: number,
-  changeInterval: number,
-  includeMount: boolean,
-  page: string,
-  port: number,
-  watch: string,
+  averageOf: number;
+  changeInterval: number;
+  includeMount: boolean;
+  page: string;
+  port: number;
+  watch: string;
 }
 
 const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
-(async function() {
+(async function () {
   console.log(`
   █▀█ ▄▀█ █▀█
   █▀▄ █▀█ █▀▀ \x1b[1;32mreact automation profiler\x1b[37m
   `);
 
   const options = yargs
-    .usage(`Usage: --averageOf <averageOf> --changeInterval <changeInterval> \
-      --includeMount <includeMount> --page <page> --port <port> --watch <watch>`)
+    .usage(
+      `Usage: --averageOf <averageOf> --changeInterval <changeInterval> \
+      --includeMount <includeMount> --page <page> --port <port> --watch <watch>`
+    )
     .option('averageOf', {
       describe: 'run each flow n number of times and average out the metrics',
       type: 'number',
@@ -52,8 +54,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     .option('watch', {
       describe: 'generate charts on every new build',
       type: 'string',
-    })
-    .argv;
+    }).argv;
 
   const {
     averageOf = 1,
@@ -88,21 +89,29 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     try {
       const files = await fs.readdir(packagePath);
       for (const file of files) {
-        if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
+        if (file.includes('.json'))
+          await fs.unlink(path.join(packagePath, file));
       }
-    } catch(e) {
-      printMessage(ERROR, { e: <Error>e, log: 'An error occurred while deleting JSON files.' });
+    } catch (e) {
+      printMessage(ERROR, {
+        e: <Error>e,
+        log: 'An error occurred while deleting JSON files.',
+      });
     }
   }
 
   function getStopMessage() {
-   return `Displaying ${
-     versionCount++ ? `${versionCount} versions of `: ''
+    return `Displaying ${
+      versionCount++ ? `${versionCount} versions of ` : ''
     }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m`;
   }
 
   async function handleAutomation() {
-    for (let automationCount = 1; automationCount <= averageOf; automationCount++) {
+    for (
+      let automationCount = 1;
+      automationCount <= averageOf;
+      automationCount++
+    ) {
       await runAutomation(automationOptions, isServerReady, automationCount);
       if (!isServerReady && automationCount === averageOf) isServerReady = true;
     }
@@ -123,17 +132,27 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
   await deleteJsonFiles();
 
   if (watch) {
-    const nodemon = spawn('npx', [
-      'nodemon',
-      '--delay', '10000ms',
-      '--ext', 'js,ts,jsx,tsx',
-      '--quiet',
-      '--watch', `${cwd}/${watch}`,
-      `${packagePath}/watch.js`,
-    ],  { stdio: ['pipe', 'pipe', 'pipe', 'ipc'], });
+    const nodemon = spawn(
+      'npx',
+      [
+        'nodemon',
+        '--delay',
+        '10000ms',
+        '--ext',
+        'js,ts,jsx,tsx',
+        '--quiet',
+        '--watch',
+        `${cwd}/${watch}`,
+        `${packagePath}/watch.js`,
+      ],
+      { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
+    );
 
     nodemon.on('message', async (event: Event) => {
-      if (event.type === 'exit' && (++changeCount === changeInterval || !isServerReady)) {
+      if (
+        event.type === 'exit' &&
+        (++changeCount === changeInterval || !isServerReady)
+      ) {
         printMessage(AUTOMATION_START);
 
         try {
@@ -152,7 +171,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
         }
 
         printMessage(AUTOMATION_STOP, { log: getStopMessage() });
-      };
+      }
     });
     nodemon.on('quit', () => process.exit());
   } else {

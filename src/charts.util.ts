@@ -4,13 +4,13 @@ export type MouseMoveEvent = {
   target: {
     style: {
       outline: string;
-    }
+    };
   } & {
     ['__data__']: {
-      key: keyof ParagraphMap,
+      key: keyof ParagraphMap;
       value: string;
     };
-  }
+  };
 };
 
 interface MouseClickEvent extends MouseEvent {
@@ -22,16 +22,16 @@ type ParagraphString =
   | 'Base Duration'
   | 'Number of Interactions'
   | 'Total Automation Time Elapsed';
-  
+
 enum ArrowTypes {
   LEFT = 'left',
-  RIGHT = 'right'
+  RIGHT = 'right',
 }
 
 export enum MouseEventSelectors {
   INTERACTIONS = 'interactions',
   RECT = 'rect',
-  TOTAL = 'total'
+  TOTAL = 'total',
 }
 
 export enum ParagraphMap {
@@ -42,16 +42,12 @@ export enum ParagraphMap {
 }
 
 export const paragraphs: { [key in ParagraphMap]?: string } = {
-  [ParagraphMap.ACTUAL_DURATION]:
-    ` The total time it actually took the component and its subtree to render. This should \
+  [ParagraphMap.ACTUAL_DURATION]: ` The total time it actually took the component and its subtree to render. This should \
       ideally be lower after successive renders if memoization techniques are in place.`,
-  [ParagraphMap.BASE_DURATION]:
-    ` The estimated time it will take the component and its subtree to render. This does not \
+  [ParagraphMap.BASE_DURATION]: ` The estimated time it will take the component and its subtree to render. This does not \
       take into account memoization for the component and its children.`,
-  [ParagraphMap.NUMBER_OF_INTERACTIONS]:
-    ` The total number of page interactions that occurred during the automation flow.`,
-  [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]:
-    ` The total time that elapsed during the automation flow. This doesn't indicate the total \
+  [ParagraphMap.NUMBER_OF_INTERACTIONS]: ` The total number of page interactions that occurred during the automation flow.`,
+  [ParagraphMap.TOTAL_AUTOMATION_TIME_ELAPSED]: ` The total time that elapsed during the automation flow. This doesn't indicate the total \
       render time, but instead the time it took for the automation to complete. This \
       is calculated by taking the highest commitTime of all renders and subtracting the lowest \
       startTime of all renders, which indicates the length of time from when the \
@@ -79,17 +75,15 @@ export function createCarousel(carouselId: string) {
 
   const arrowLeftEl = document.createElement('div');
   arrowLeftEl.classList.add('arrow', 'arrow-left');
-  arrowLeftEl.addEventListener(
-    'click',
-    e => handleArrowClick(e as MouseClickEvent, ArrowTypes.LEFT),
+  arrowLeftEl.addEventListener('click', (e) =>
+    handleArrowClick(e as MouseClickEvent, ArrowTypes.LEFT)
   );
   arrowLeftEl.innerHTML = '◄';
 
   const arrowRightEl = document.createElement('div');
   arrowRightEl.classList.add('arrow', 'arrow-right');
-  arrowRightEl.addEventListener(
-    'click',
-    e => handleArrowClick(e as MouseClickEvent, ArrowTypes.RIGHT),
+  arrowRightEl.addEventListener('click', (e) =>
+    handleArrowClick(e as MouseClickEvent, ArrowTypes.RIGHT)
   );
   arrowRightEl.innerHTML = '►';
 
@@ -112,22 +106,27 @@ export function createSVG(id: string) {
   return svgEl;
 }
 
-function handleArrowClick(e: MouseClickEvent, arrowType: ArrowTypes.LEFT | ArrowTypes.RIGHT) {
+function handleArrowClick(
+  e: MouseClickEvent,
+  arrowType: ArrowTypes.LEFT | ArrowTypes.RIGHT
+) {
   const { LEFT, RIGHT } = ArrowTypes;
 
   const carousel = e.path[2];
   const SVGs = (carousel as HTMLElement).querySelectorAll('svg');
   const h5El = (carousel as HTMLElement).querySelector('h5');
-  const visibleSVGIndex = Array
-    .from(SVGs)
-    .findIndex(item => !Array.from(item.classList).includes('hidden'));
+  const visibleSVGIndex = Array.from(SVGs).findIndex(
+    (item) => !Array.from(item.classList).includes('hidden')
+  );
 
   if (
     (arrowType === LEFT && visibleSVGIndex === 0) ||
     (arrowType === RIGHT && visibleSVGIndex === SVGs.length - 1)
-  ) return;
+  )
+    return;
 
-  const indexToUpdate = arrowType === LEFT ? visibleSVGIndex - 1 : visibleSVGIndex + 1;
+  const indexToUpdate =
+    arrowType === LEFT ? visibleSVGIndex - 1 : visibleSVGIndex + 1;
 
   SVGs[indexToUpdate].classList.remove('hidden');
   SVGs[visibleSVGIndex].classList.add('hidden');
@@ -147,31 +146,34 @@ export function handleMouseOut(e?: MouseMoveEvent) {
 
 export function handleMouseOver(name?: string, e?: MouseMoveEvent) {
   const { INTERACTIONS, RECT, TOTAL } = MouseEventSelectors;
-  const { NUMBER_OF_INTERACTIONS, TOTAL_AUTOMATION_TIME_ELAPSED } = ParagraphMap;
+  const { NUMBER_OF_INTERACTIONS, TOTAL_AUTOMATION_TIME_ELAPSED } =
+    ParagraphMap;
   const h4 = document.querySelector('h4');
 
   switch (name) {
     case INTERACTIONS:
-      h4!.innerHTML =
-        `${NUMBER_OF_INTERACTIONS}: ${paragraphs[NUMBER_OF_INTERACTIONS]}`;
+      h4!.innerHTML = `${NUMBER_OF_INTERACTIONS}: ${paragraphs[NUMBER_OF_INTERACTIONS]}`;
       h4!.style.opacity = '1';
       break;
     case RECT:
       const { key: keyString } = (e as MouseMoveEvent).target['__data__'];
       if (keyString) {
-        h4!.innerHTML = `${<string>keyString}: ${paragraphs[keyString as ParagraphString]}`;
+        h4!.innerHTML = `${<string>keyString}: ${
+          paragraphs[keyString as ParagraphString]
+        }`;
         h4!.style.opacity = '1';
 
         const span = document.querySelector('#big-tooltip span');
-        span!.innerHTML = `${<string>keyString}: ${(e as MouseMoveEvent).target['__data__'].value} ms`;
+        span!.innerHTML = `${<string>keyString}: ${
+          (e as MouseMoveEvent).target['__data__'].value
+        } ms`;
         (span as HTMLElement)!.style.opacity = '1';
-      
+
         (e as MouseMoveEvent).target.style.outline = '1px solid white';
       }
       break;
     case TOTAL:
-      h4!.innerHTML =
-      `${TOTAL_AUTOMATION_TIME_ELAPSED}: ${paragraphs[TOTAL_AUTOMATION_TIME_ELAPSED]}`;
+      h4!.innerHTML = `${TOTAL_AUTOMATION_TIME_ELAPSED}: ${paragraphs[TOTAL_AUTOMATION_TIME_ELAPSED]}`;
       h4!.style.opacity = '1';
       break;
     default:
@@ -199,7 +201,8 @@ export function updateTooltipPosition(e: MouseEvent) {
   const { clientX, clientY }: { clientX: number; clientY: number } = e;
   const rightBuffer = windowWidth - 350;
 
-  tooltip!.style.left =
-    `${clientX > rightBuffer ? clientX - (clientX - rightBuffer) : clientX}px`;
+  tooltip!.style.left = `${
+    clientX > rightBuffer ? clientX - (clientX - rightBuffer) : clientX
+  }px`;
   tooltip!.style.top = `${clientY}px`;
 }

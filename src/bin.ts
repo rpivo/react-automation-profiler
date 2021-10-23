@@ -1,6 +1,5 @@
 #!/usr/bin/env node --no-warnings
 import browserSync from 'browser-sync';
-import { spawn } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -14,7 +13,7 @@ interface Options {
   includeMount: boolean;
   page: string;
   port: number;
-  watch: string;
+  watch: boolean | string;
 }
 
 const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
@@ -53,7 +52,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     })
     .option('watch', {
       describe: 'generate charts on every new build',
-      type: 'string',
+      type: 'boolean' || 'string',
     }).argv;
 
   const {
@@ -62,7 +61,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
     includeMount = false,
     page,
     port = 1235,
-    watch = '',
+    watch = false,
   } = <Options>options;
 
   const cwd = path.resolve();
@@ -72,8 +71,23 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
   let changeCount = 0;
   let versionCount = 0;
-  let isProxyReady = false;
   let isServerReady = false;
+  let timer: NodeJS.Timeout;
+
+  function checkShouldAutomate() {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      changeCount++;
+
+      if (changeCount >= changeInterval) {
+        changeCount = 0;
+        await handleAutomation();
+        browserSync.reload();
+      }
+      // will re-automate after 10 seconds to give time for the host project
+      // to rebuild after changes
+    }, 10000);
+  }
 
   async function deleteJsonFiles() {
     try {
@@ -135,53 +149,29 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 
   await deleteJsonFiles();
 
+  try {
+    await handleAutomation();
+  } catch {
+    process.exit();
+  }
+
+  setupProxy();
+
   if (watch) {
-    const nodemon = spawn(
-      'npx',
-      [
-        'nodemon',
-        '--delay',
-        '10000ms',
-        '--ext',
-        'js,ts,jsx,tsx',
-        '--quiet',
-        '--watch',
-        `${cwd}/${watch}`,
-        `${packagePath}/watch.js`,
-      ],
-      { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
-    );
+    const watchDir = typeof watch === 'string' ? `${cwd}/${watch}` : cwd;
 
-    nodemon.on('message', async (event: Event) => {
-      if (
-        event.type === 'exit' &&
-        (++changeCount === changeInterval || !isServerReady)
-      ) {
-        try {
-          await handleAutomation();
-        } catch {
-          process.exit();
-        }
+    const events = fs.watch(
+      watchDir,
+      { recursive: true }
+      // node types are saying that fs.watch returns AsyncIterable<string>, but
+      // it's actually AsyncIterable<{ eventType: string; filename: string }>. 
+      // Have to cast as unknown first to get around this.
+    ) as unknown as AsyncIterable<{ eventType: string; filename: string }>;
 
-        changeCount = 0;
-
-        if (!isProxyReady) {
-          setupProxy();
-          isProxyReady = true;
-        } else {
-          browserSync.reload();
-        }
+    for await (const { eventType, filename } of events) {
+      if (eventType === 'change' && !filename.startsWith('node_modules')) {
+        checkShouldAutomate();
       }
-    });
-    nodemon.on('quit', () => process.exit());
-  } else {
-
-    try {
-      await handleAutomation();
-    } catch {
-      process.exit();
     }
-
-    setupProxy();
   }
 })();

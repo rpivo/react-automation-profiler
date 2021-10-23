@@ -6,10 +6,6 @@ import yaml from 'js-yaml';
 import puppeteer, { Page } from 'puppeteer';
 import { getFileName, MessageTypes, printMessage } from './util.js';
 
-declare module 'js-yaml' {
-  export function safeLoad(str: string): any;
-}
-
 interface AutomationProps {
   automationCount: number;
   averageOf: number;
@@ -243,15 +239,17 @@ export default async function ({
 
   async function readAutomationFile() {
     let flows;
+
     try {
-      flows = yaml.safeLoad(
+      flows = yaml.load(
         await fs.readFile(`${cwd}/react.automation.yml`, 'utf8')
       ) as Flows;
       return flows;
     } catch {
-      flows = yaml.safeLoad(
+      flows = yaml.load(
         await fs.readFile(`${cwd}/react.automation.yaml`, 'utf8')
       ) as Flows;
+
       return flows;
     }
   }

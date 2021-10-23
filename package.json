@@ -42,7 +42,7 @@
     "diff": "bash ./sh/diff.sh",
     "pack": "npm pack",
     "prepublishOnly": "npm run build",
-    "rap": "cd example && npx rap --page=http://localhost:3000/three-buttons"
+    "rap": "cd example && npx rap --page=http://localhost:3000/three-buttons --watch"
   },
   "dependencies": {
     "browser-sync": "^2.27.4",
@@ -66,7 +66,6 @@
     "@types/react": "^17.0.13",
     "@types/yargs": "^17.0.2",
     "d3": "^7.0.0",
-    "nodemon": "^2.0.9",
     "react": "^17.0.2",
     "rollup": "^2.52.7",
     "tslib": "^2.3.0",

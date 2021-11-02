@@ -1,0 +1,22 @@
+automation:
+  pages:
+    authenticate-with-cookie:
+      leading-steps: [] # can be omitted
+      action-steps: {} # can be omitted
+    three-buttons:
+      leading-steps: [] # can be omitted
+      action-steps:
+        Click First Button:
+          - click .first-button
+        Click Second Button Twice:
+          - click .second-button
+          - click .second-button
+        Click Third Button Three Times:
+          - click .third-button
+          - click .third-button
+          - click .third-button
+config:
+  cookies:
+    auth: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+  headers:
+    Authorization: Basic YWxhZGRpbjpvcGVuc2VzYW1l

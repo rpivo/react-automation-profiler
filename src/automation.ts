@@ -17,6 +17,27 @@ interface AutomationProps {
   url: string;
 }
 
+interface SimpleConfig {
+  'leading-steps': Array<string>;
+  'action-steps': { [step: string]: string };
+}
+
+interface AdvancedConfig {
+  config?: {
+    cookies: {
+      [cookie: string]: string;
+    };
+    headers: {
+      [header: string]: string;
+    };
+  };
+  pages: {
+    [page: string]: SimpleConfig;
+  };
+}
+
+type Config = AdvancedConfig | SimpleConfig;
+
 type Flows = {
   [key: string]: string[];
 };

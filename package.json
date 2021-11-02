@@ -40,6 +40,7 @@
     "clean": "bash ./sh/clean.sh",
     "example": "bash ./sh/example.sh",
     "diff": "bash ./sh/diff.sh",
+    "lint": "npx prettier --write .",
     "pack": "npm pack",
     "prepublishOnly": "npm run build",
     "rap": "cd example && npx rap --page=http://localhost:3000/three-buttons --watch"
@@ -67,6 +68,7 @@
     "@types/react": "^17.0.13",
     "@types/yargs": "^17.0.2",
     "d3": "^7.0.0",
+    "prettier": "^2.4.1",
     "react": "^17.0.2",
     "rollup": "^2.52.7",
     "tslib": "^2.3.0",

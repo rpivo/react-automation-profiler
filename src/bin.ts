@@ -164,7 +164,7 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
       watchDir,
       { recursive: true }
       // node types are saying that fs.watch returns AsyncIterable<string>, but
-      // it's actually AsyncIterable<{ eventType: string; filename: string }>. 
+      // it's actually AsyncIterable<{ eventType: string; filename: string }>.
       // Have to cast as unknown first to get around this.
     ) as unknown as AsyncIterable<{ eventType: string; filename: string }>;
 

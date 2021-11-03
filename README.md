@@ -14,6 +14,7 @@ Analyze your React app's renders with automated user flows that generate compari
 - Compare charts that get generated as you work (or do a before-and-after by stashing major changes) to see if changes are creating more/less renders, reducing render timings, etc.
 - Export all generated charts into a single HTML file
 - TypeScript support
+- Other Resources
 
 ### Contents
 
@@ -162,3 +163,7 @@ npx rap --page=http://localhost:8000/index.html --watch
 | includeMount   | boolean           | no       | false   | includes the initial `mount` phase renders that happen before any automation flows are initialized.                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | port           | number            | no       | 1235    | the port that charts will be displayed on.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | watch          | boolean or string | no       | false   | rerun `rap` on any changes to the given folder. If set as a boolean (ex: `--watch`), rerun on any changes inside the repo. If set as a string (ex: `--watch=src`), rerun on any changes in the given folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. Note that `watch` runs on a 10-second delay to allow the application's local development toolchain to finish building before re-running the automation against the new build. |
+
+## Other Resources
+
+Visit [pptr.dev](https://pptr.dev/) for the Puppeteer API.

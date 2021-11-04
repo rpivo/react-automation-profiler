@@ -42,7 +42,7 @@ type Flows = {
   [key: string]: string[];
 };
 
-type StringIndexablePage = Page & {
+type IndexablePage = Page & {
   [key: string]: (action: string) => void;
 };
 
@@ -67,7 +67,7 @@ export default async function ({
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();
-  const page = (await browser.newPage()) as StringIndexablePage;
+  const page = <IndexablePage>await browser.newPage();
 
   let errorMessage: string = '';
 
@@ -262,14 +262,14 @@ export default async function ({
     let flows;
 
     try {
-      flows = yaml.load(
-        await fs.readFile(`${cwd}/react.automation.yml`, 'utf8')
-      ) as Flows;
+      flows = <Flows>(
+        yaml.load(await fs.readFile(`${cwd}/react.automation.yml`, 'utf8'))
+      );
       return flows;
     } catch {
-      flows = yaml.load(
-        await fs.readFile(`${cwd}/react.automation.yaml`, 'utf8')
-      ) as Flows;
+      flows = <Flows>(
+        yaml.load(await fs.readFile(`${cwd}/react.automation.yaml`, 'utf8'))
+      );
 
       return flows;
     }

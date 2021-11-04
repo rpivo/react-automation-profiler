@@ -43,7 +43,7 @@
     "lint": "npx prettier --write .",
     "pack": "npm pack",
     "prepublishOnly": "npm run build",
-    "rap": "cd example && npx rap --page=http://localhost:3000/three-buttons --watch"
+    "rap": "cd example && npx rap -c react.automation.yml --page=http://localhost:3000/three-buttons"
   },
   "dependencies": {
     "browser-sync": "^2.27.4",

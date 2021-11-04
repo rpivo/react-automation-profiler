@@ -10,6 +10,7 @@ import { deleteJsonFiles, MessageTypes, printMessage } from './util.js';
 interface Options {
   averageOf: number;
   changeInterval: number;
+  config: string;
   includeMount: boolean;
   page: string;
   port: number;
@@ -24,10 +25,6 @@ console.log(`
   `);
 
 const options = yargs
-  .usage(
-    `Usage: --averageOf <averageOf> --changeInterval <changeInterval> \
-      --includeMount <includeMount> --page <page> --port <port> --watch <watch>`
-  )
   .option('averageOf', {
     describe: 'run each flow n number of times and average out the metrics',
     type: 'number',
@@ -35,6 +32,11 @@ const options = yargs
   .option('changeInterval', {
     describe: 'number of changes before automation is rerun',
     type: 'number',
+  })
+  .option('config', {
+    alias: 'c',
+    describe: 'configuration file',
+    type: 'string',
   })
   .option('includeMount', {
     describe: 'includes the initial mount render',
@@ -57,6 +59,7 @@ const options = yargs
 const {
   averageOf = 1,
   changeInterval = 1,
+  config = '',
   includeMount = false,
   page,
   port = 1235,

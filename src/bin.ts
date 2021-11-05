@@ -62,7 +62,7 @@ const options = yargs
 const {
   averageOf = 1,
   changeInterval = 1,
-  config = '',
+  config: configStr,
   includeMount = false,
   page,
   port = 1235,
@@ -77,6 +77,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
 const serverPath = `http://localhost:${port + 1}`;
 
+let config = {};
 let changeCount = 0;
 let versionCount = 0;
 let isServerReady = false;
@@ -148,6 +149,10 @@ function setupProxy() {
 
 // delete any previously cached json files created during old automation runs
 await deleteJsonFiles(packagePath);
+
+if (configStr) {
+  config = await fs.readFile(configStr, 'utf8');
+}
 
 try {
   // initialize automation

@@ -1,3 +1,1 @@
-import AutomationProfiler from './AutomationProfiler';
-
-export { AutomationProfiler };
+export { default as AutomationProfiler } from './AutomationProfiler';

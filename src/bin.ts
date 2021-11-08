@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import runAutomation from './automation.js';
-import { MessageTypes, printMessage } from './util.js';
+import { deleteJsonFiles, MessageTypes, printMessage } from './util.js';
 
 interface Options {
   averageOf: number;
@@ -88,20 +88,6 @@ function checkShouldAutomate() {
   }, 10000);
 }
 
-async function deleteJsonFiles() {
-  try {
-    const files = await fs.readdir(packagePath);
-    for (const file of files) {
-      if (file.includes('.json')) await fs.unlink(path.join(packagePath, file));
-    }
-  } catch (e) {
-    printMessage(ERROR, {
-      e: <Error>e,
-      log: 'An error occurred while deleting JSON files.',
-    });
-  }
-}
-
 function getStopMessage() {
   return `Displaying ${
     versionCount++ ? `${versionCount} versions of ` : ''
@@ -145,7 +131,11 @@ function setupProxy() {
   });
 }
 
-await deleteJsonFiles();
+// run
+/***********************/
+
+// delete any previously cached json files created during old automation runs
+await deleteJsonFiles(packagePath);
 
 try {
   await handleAutomation();

@@ -1,8 +1,27 @@
-export enum MessageTypes {
+import fs from 'fs';
+import path from 'path';
+
+enum MessageTypes {
   AUTOMATION_START = 'AUTOMATION_START',
   AUTOMATION_STOP = 'AUTOMATION_STOP',
   ERROR = 'ERROR',
   NOTICE = 'NOTICE',
+}
+
+async function deleteJsonFiles(packagePath: string) {
+  try {
+    const files = await fs.readdirSync(packagePath);
+    for (const file of files) {
+      if (file.includes('.json')) {
+        fs.unlinkSync(path.join(packagePath, file));
+      }
+    }
+  } catch (e) {
+    printMessage(MessageTypes.ERROR, {
+      e: <Error>e,
+      log: 'An error occurred while deleting JSON files.',
+    });
+  }
 }
 
 function formatLabel(label: string) {
@@ -13,7 +32,7 @@ function formatLabel(label: string) {
     .join('');
 }
 
-export function getFileName(label?: string, extension: string = 'json') {
+function getFileName(label?: string, extension: string = 'json') {
   return `${hyphenateString(
     `${label ? formatLabel(label) : ''}${
       extension === 'json' ? `-${Date.now()}` : ''
@@ -29,7 +48,7 @@ function hyphenateString(str: string) {
     .replace(/-$/, '');
 }
 
-export function printMessage(
+function printMessage(
   messageType: string,
   params?: {
     e?: Error;
@@ -62,3 +81,5 @@ export function printMessage(
 
   console.log(message);
 }
+
+export { deleteJsonFiles, getFileName, MessageTypes, printMessage };

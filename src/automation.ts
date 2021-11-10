@@ -42,14 +42,10 @@ type Flows = {
   [key: string]: string[];
 };
 
-type IndexablePage = Page & {
-  [key: string]: (action: string) => void;
-};
-
 enum Actions {
-  click = 'click',
-  focus = 'focus',
-  hover = 'hover',
+  CLICK = 'click',
+  FOCUS = 'focus',
+  HOVER = 'hover',
 }
 
 const { ERROR, NOTICE } = MessageTypes;
@@ -67,7 +63,7 @@ export default async function automate({
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch();
-  const page = <IndexablePage>await browser.newPage();
+  const page = await browser.newPage();
 
   let errorMessage: string = '';
 
@@ -249,8 +245,18 @@ export default async function automate({
       const [actionType, ...selector] = action.split(' ');
       if (actionType in Actions) {
         const selectorStr = selector.join(' ');
-        await page.waitForSelector(selectorStr);
-        await page[actionType](selectorStr);
+
+        switch (actionType) {
+          case Actions.CLICK:
+            await page.click(selectorStr);
+            break;
+          case Actions.FOCUS:
+            await page.focus(selectorStr);
+            break;
+          case Actions.HOVER:
+            await page.hover(selectorStr);
+            break;
+        }
       } else {
         errorMessage = 'One or more action types provided was not valid.';
         throw printMessage(ERROR, { log: errorMessage });

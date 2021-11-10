@@ -54,7 +54,7 @@ enum Actions {
 
 const { ERROR, NOTICE } = MessageTypes;
 
-export default async function ({
+export default async function automate({
   automationCount,
   averageOf,
   cwd,

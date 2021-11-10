@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import runAutomation from './automation.js';
+import automate from './automation.js';
 import { deleteJsonFiles, MessageTypes, printMessage } from './util.js';
 
 interface Options {
@@ -102,7 +102,7 @@ async function handleAutomation() {
   ) {
     printMessage(AUTOMATION_START);
 
-    await runAutomation({
+    await automate({
       automationCount,
       averageOf,
       cwd,

@@ -22,7 +22,10 @@ const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
 console.log(`
   █▀█ ▄▀█ █▀█
   █▀▄ █▀█ █▀▀ \x1b[1;32mreact automation profiler\x1b[37m
-  `);
+`);
+
+// config
+/***********************/
 
 const options = yargs
   .option('averageOf', {
@@ -66,6 +69,9 @@ const {
   watch = false,
 } = <Options>options;
 
+// context vars
+/***********************/
+
 const cwd = path.resolve();
 const scriptPath = fileURLToPath(import.meta.url);
 const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
@@ -75,6 +81,9 @@ let changeCount = 0;
 let versionCount = 0;
 let isServerReady = false;
 let timer: NodeJS.Timeout;
+
+// methods
+/***********************/
 
 function checkShouldAutomate() {
   clearTimeout(timer);
@@ -141,11 +150,14 @@ function setupProxy() {
 await deleteJsonFiles(packagePath);
 
 try {
+  // initialize automation
   await handleAutomation();
 } catch {
-  process.exit();
+  // automation failed
+  process.exit(1);
 }
 
+// initialize browser-sync, which opens the automation charts in the browser.
 setupProxy();
 
 if (watch) {
@@ -160,6 +172,7 @@ if (watch) {
   ) as unknown as AsyncIterable<{ eventType: string; filename: string }>;
 
   for await (const { eventType, filename } of events) {
+    // if a change occurred in the watched directory...
     if (eventType === 'change' && !filename.startsWith('node_modules')) {
       checkShouldAutomate();
     }

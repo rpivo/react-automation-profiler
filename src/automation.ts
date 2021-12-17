@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
-import puppeteer, { Page } from 'puppeteer';
+import puppeteer from 'puppeteer';
 import { getFileName, MessageTypes, printMessage } from './util.js';
 
 interface AutomationProps {
@@ -15,6 +15,7 @@ interface AutomationProps {
   packagePath: string;
   serverPort: number;
   url: string;
+  headless: boolean;
 }
 
 interface SimpleConfig {
@@ -46,6 +47,8 @@ enum Actions {
   CLICK = 'click',
   FOCUS = 'focus',
   HOVER = 'hover',
+  GOTO = 'goto',
+  WAIT = 'wait',
 }
 
 const { ERROR, NOTICE } = MessageTypes;
@@ -59,10 +62,11 @@ export default async function automate({
   packagePath,
   serverPort,
   url,
+  headless,
 }: AutomationProps) {
   const MOUNT = 'Mount';
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless });
   const page = await browser.newPage();
 
   let errorMessage: string = '';
@@ -243,8 +247,11 @@ export default async function automate({
   async function handleActions(actions: string[]) {
     for (const action of actions) {
       const [actionType, ...selector] = action.split(' ');
-      if (actionType in Actions) {
+
+      if (Object.values(Actions).includes(actionType as Actions)) {
         const selectorStr = selector.join(' ');
+
+        printMessage(NOTICE, { log: `${actionType}: ${selectorStr}` });
 
         switch (actionType) {
           case Actions.CLICK:
@@ -255,6 +262,12 @@ export default async function automate({
             break;
           case Actions.HOVER:
             await page.hover(selectorStr);
+            break;
+          case Actions.GOTO:
+            await page.goto(selectorStr);
+            break;
+          case Actions.WAIT:
+            await page.waitForTimeout(parseInt(selectorStr));
             break;
         }
       } else {
@@ -284,22 +297,27 @@ export default async function automate({
   async function runFlows() {
     try {
       const flows = await readAutomationFile();
-      if (flows) {
-        const keys = Object.keys(flows);
-        let attempts = 0;
-        for (let i = 0; i < keys.length; i++) {
-          await handleActions(flows[keys[i]]);
-          const success = await collectLogs({
-            label: keys[i],
-            numberOfInteractions: flows[keys[i]].length,
-          });
-          if (!success) {
-            if (attempts++ < 3) i -= 1;
-            else
-              printMessage(NOTICE, {
-                log: `Automation flow "${keys[i]}" did not produce any renders.\n`,
-              });
-          }
+
+      if (!flows) {
+        return;
+      }
+
+      const keys = Object.keys(flows);
+      let attempts = 0;
+      for (let i = 0; i < keys.length; i++) {
+        const actions = flows[keys[i]];
+        await handleActions(actions);
+
+        const success = await collectLogs({
+          label: keys[i],
+          numberOfInteractions: actions.length,
+        });
+        if (!success) {
+          if (attempts++ < 3) i -= 1;
+          else
+            printMessage(NOTICE, {
+              log: `Automation flow "${keys[i]}" did not produce any renders.\n`,
+            });
         }
       }
     } catch (e) {
@@ -327,6 +345,7 @@ export default async function automate({
   }
 
   await page.goto(url);
+
   await page.setViewport({
     deviceScaleFactor: 1,
     height: 1080,

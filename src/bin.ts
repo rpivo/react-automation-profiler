@@ -5,8 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import automate from './automation.js';
-import { deleteJsonFiles, MessageTypes, printMessage } from './util.js';
-
+import { MessageTypes, printMessage } from './util.js';
+import { hideBin } from 'yargs/helpers';
+import { deleteJsonFiles } from './file.util.js';
 interface Options {
   averageOf: number;
   changeInterval: number;
@@ -14,6 +15,7 @@ interface Options {
   page: string;
   port: number;
   watch: boolean | string;
+  headless: boolean;
 }
 
 const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
@@ -23,7 +25,7 @@ console.log(`
   █▀▄ █▀█ █▀▀ \x1b[1;32mreact automation profiler\x1b[37m
   `);
 
-const options = yargs
+const options = yargs(hideBin(process.argv))
   .usage(
     `Usage: --averageOf <averageOf> --changeInterval <changeInterval> \
       --includeMount <includeMount> --page <page> --port <port> --watch <watch>`
@@ -52,6 +54,10 @@ const options = yargs
   .option('watch', {
     describe: 'generate charts on every new build',
     type: 'boolean' || 'string',
+  })
+  .option('headless', {
+    describe: 'determines if chromium browser window should be visible',
+    type: 'boolean',
   }).argv;
 
 const {
@@ -61,6 +67,7 @@ const {
   page,
   port = 1235,
   watch = false,
+  headless = true,
 } = <Options>options;
 
 const cwd = path.resolve();
@@ -111,6 +118,7 @@ async function handleAutomation() {
       packagePath,
       serverPort: port + 1,
       url: page,
+      headless,
     });
 
     printMessage(AUTOMATION_STOP, { log: getStopMessage() });

@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import automate from './automation.js';
+import automate, { OutputType } from './automation.js';
 import { MessageTypes, printMessage } from './util.js';
 import { hideBin } from 'yargs/helpers';
 import { deleteJsonFiles } from './file.util.js';
@@ -16,6 +16,7 @@ interface Options {
   port: number;
   watch: boolean | string;
   headless: boolean;
+  output: OutputType;
 }
 
 const { AUTOMATION_START, AUTOMATION_STOP, ERROR } = MessageTypes;
@@ -55,6 +56,10 @@ const options = yargs(hideBin(process.argv))
     describe: 'generate charts on every new build',
     type: 'boolean' || 'string',
   })
+  .option('output', {
+    describe: 'choose the desired output. Acceptable values: [chart, json]',
+    type: 'string',
+  })
   .option('headless', {
     describe: 'determines if chromium browser window should be visible',
     type: 'boolean',
@@ -68,6 +73,7 @@ const {
   port = 1235,
   watch = false,
   headless = true,
+  output = OutputType.CHART,
 } = <Options>options;
 
 const cwd = path.resolve();
@@ -95,10 +101,12 @@ function checkShouldAutomate() {
   }, 10000);
 }
 
-function getStopMessage() {
-  return `Displaying ${
-    versionCount++ ? `${versionCount} versions of ` : ''
-  }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m`;
+function getStopMessage(output: OutputType) {
+  return output === OutputType.CHART
+    ? `Displaying ${
+        versionCount++ ? `${versionCount} versions of ` : ''
+      }charts at: \x1b[1;32mhttp://localhost:${port}\x1b[37m`
+    : 'Automation finished';
 }
 
 async function handleAutomation() {
@@ -119,9 +127,10 @@ async function handleAutomation() {
       serverPort: port + 1,
       url: page,
       headless,
+      output,
     });
 
-    printMessage(AUTOMATION_STOP, { log: getStopMessage() });
+    printMessage(AUTOMATION_STOP, { log: getStopMessage(output) });
 
     if (!isServerReady && automationCount === averageOf) isServerReady = true;
   }
@@ -151,22 +160,24 @@ try {
   process.exit();
 }
 
-setupProxy();
+if (output === OutputType.CHART) {
+  setupProxy();
 
-if (watch) {
-  const watchDir = typeof watch === 'string' ? `${cwd}/${watch}` : cwd;
+  if (watch) {
+    const watchDir = typeof watch === 'string' ? `${cwd}/${watch}` : cwd;
 
-  const events = fs.watch(
-    watchDir,
-    { recursive: true }
-    // node types are saying that fs.watch returns AsyncIterable<string>, but
-    // it's actually AsyncIterable<{ eventType: string; filename: string }>.
-    // Have to cast as unknown first to get around this.
-  ) as unknown as AsyncIterable<{ eventType: string; filename: string }>;
+    const events = fs.watch(
+      watchDir,
+      { recursive: true }
+      // node types are saying that fs.watch returns AsyncIterable<string>, but
+      // it's actually AsyncIterable<{ eventType: string; filename: string }>.
+      // Have to cast as unknown first to get around this.
+    ) as unknown as AsyncIterable<{ eventType: string; filename: string }>;
 
-  for await (const { eventType, filename } of events) {
-    if (eventType === 'change' && !filename.startsWith('node_modules')) {
-      checkShouldAutomate();
+    for await (const { eventType, filename } of events) {
+      if (eventType === 'change' && !filename.startsWith('node_modules')) {
+        checkShouldAutomate();
+      }
     }
   }
 }

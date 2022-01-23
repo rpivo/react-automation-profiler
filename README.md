@@ -164,6 +164,35 @@ npx rap --page=http://localhost:8000/index.html --watch
 | port           | number            | no       | 1235    | the port that charts will be displayed on.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | watch          | boolean or string | no       | false   | rerun `rap` on any changes to the given folder. If set as a boolean (ex: `--watch`), rerun on any changes inside the repo. If set as a string (ex: `--watch=src`), rerun on any changes in the given folder. This will save charts from the previous run(s) and generate new charts based on the latest changes, resulting in a new version for each flow. Note that `watch` runs on a 10-second delay to allow the application's local development toolchain to finish building before re-running the automation against the new build. |
 
+## Programmatic usage example
+
+```TSX
+  import { Automation } from 'react-automation-profiler/lib/api/index.js';
+
+
+  async function myAppProfilingFn() {
+    const results = await Automation.run({
+      averageOf: 3,
+      includeMount: false,
+      page: 'http://my-app-host.com',
+    });
+
+
+    const postProcessedResults = someParsingFunction(results)
+    externalService.send(postProcessedResults)
+  }
+```
+
+If you would like to see the working example, please run:
+
+```sh
+  npm run example
+  # in the second terminal
+  node ./example/src/api.mjs
+```
+
+You still need to have `react.automation.yaml` defined in the directory where the script is executed.
+
 ## Other Resources
 
 Visit [pptr.dev](https://pptr.dev/) for the Puppeteer API.

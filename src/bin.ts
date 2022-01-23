@@ -8,7 +8,8 @@ import automate, { OutputType } from './automation.js';
 import { MessageTypes, printMessage } from './util.js';
 import { hideBin } from 'yargs/helpers';
 import { deleteJsonFiles } from './file.util.js';
-interface Options {
+
+export interface Options {
   averageOf: number;
   changeInterval: number;
   includeMount: boolean;

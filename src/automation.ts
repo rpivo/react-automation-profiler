@@ -45,6 +45,8 @@ export enum OutputType {
   JSON = 'json',
 }
 
+export type Output = { [_: string]: {} };
+
 type Flows = {
   [key: string]: string[];
 };
@@ -70,7 +72,7 @@ export default async function automate({
   url,
   headless,
   output,
-}: AutomationProps) {
+}: AutomationProps): Promise<Output | null> {
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch({ headless });
@@ -78,13 +80,14 @@ export default async function automate({
 
   let errorMessage: string = '';
 
-  async function exportResults() {
+  async function exportResults(): Promise<Output | null> {
     switch (output) {
       case OutputType.CHART: {
         await appendJsonToHTML();
+        return null;
       }
       case OutputType.JSON: {
-        await exportJsonBundle();
+        return await exportJsonBundle();
       }
     }
   }
@@ -131,10 +134,10 @@ export default async function automate({
     }
   }
 
-  async function exportJsonBundle() {
+  async function exportJsonBundle(): Promise<Output | null> {
     const rawResults = await getRawResults();
 
-    const result: { [_: string]: {} } = {};
+    const result: Output = {};
 
     Object.keys(rawResults).forEach((fileName) => {
       const parsedResult = JSON.parse(rawResults[fileName]);
@@ -144,9 +147,11 @@ export default async function automate({
     const pathName = `${process.cwd()}/${getFileName('react_profile')}`;
     await fs.writeFile(pathName, JSON.stringify(result));
     printMessage(NOTICE, { log: `Results saved to ${pathName}` });
+
+    return result;
   }
 
-  async function calculateAverage() {
+  async function calculateAverage(): Promise<Output | null> {
     try {
       const files = await fs.readdir(packagePath);
 
@@ -222,12 +227,15 @@ export default async function automate({
           JSON.stringify(averagedData)
         );
 
-        if (averageOf === automationCount && i === flows.size - 1)
-          await exportResults();
+        if (averageOf === automationCount && i === flows.size - 1) {
+          return await exportResults();
+        }
       }
+      return null;
     } catch (e) {
       errorMessage = 'An error occurred while calculating averages.';
       printMessage(ERROR, { e: <Error>e, log: errorMessage });
+      return null;
     }
   }
 
@@ -390,8 +398,13 @@ export default async function automate({
   await runFlows();
   await browser.close();
 
-  if (averageOf > 1 && automationCount === averageOf) await calculateAverage();
-  else if (averageOf === 1) await exportResults();
+  let results: Output | null = {};
+
+  if (averageOf > 1 && automationCount === averageOf) {
+    results = await calculateAverage();
+  } else if (averageOf === 1) {
+    results = await exportResults();
+  }
 
   if (
     !isServerReady &&
@@ -404,4 +417,6 @@ export default async function automate({
     throw printMessage(ERROR, {
       log: 'Automation could not complete because of the above errors.',
     });
+
+  return results;
 }

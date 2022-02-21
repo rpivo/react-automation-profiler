@@ -1,1 +1,1 @@
-export { default as AutomationProfiler } from './AutomationProfiler';
+export { default as AutomationProfiler } from './react/AutomationProfiler';

@@ -7,16 +7,14 @@ import {
   IResults,
 } from '../automation/AutomationResultsStorage.js';
 
-type APIOptions = Omit<
-  Options,
-  'headless' | 'output' | 'watch' | 'changeInterval' | 'port'
->;
+type APIOptions = Omit<Options, 'output' | 'watch' | 'changeInterval' | 'port'>;
 
 export class Automation {
   static async run({
     averageOf = 1,
     includeMount = false,
     page,
+    headless = true,
   }: APIOptions): Promise<IResults> {
     let results: IResults = {};
     const scriptPath = fileURLToPath(import.meta.url);
@@ -37,7 +35,7 @@ export class Automation {
         packagePath,
         serverPort: 0,
         url: page,
-        headless: true,
+        headless,
         output: OutputType.JSON,
       };
 

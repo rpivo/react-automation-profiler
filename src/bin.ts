@@ -4,10 +4,10 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import automate, { OutputType } from './automation.js';
-import { MessageTypes, printMessage } from './util.js';
+import automate, { OutputType } from './automation/automation.js';
+import { MessageTypes, printMessage } from './utils/util.js';
 import { hideBin } from 'yargs/helpers';
-import { deleteJsonFiles } from './file.util.js';
+import { AutomationResultsStorage } from './automation/AutomationResultsStorage.js';
 
 export interface Options {
   averageOf: number;
@@ -86,6 +86,7 @@ let changeCount = 0;
 let versionCount = 0;
 let isServerReady = false;
 let timer: NodeJS.Timeout;
+const resultsStorage = new AutomationResultsStorage();
 
 function checkShouldAutomate() {
   clearTimeout(timer);
@@ -118,7 +119,7 @@ async function handleAutomation() {
   ) {
     printMessage(AUTOMATION_START);
 
-    await automate({
+    const automationProps = {
       automationCount,
       averageOf,
       cwd,
@@ -129,7 +130,9 @@ async function handleAutomation() {
       url: page,
       headless,
       output,
-    });
+    };
+
+    await automate(automationProps, resultsStorage);
 
     printMessage(AUTOMATION_STOP, { log: getStopMessage(output) });
 
@@ -152,12 +155,10 @@ function setupProxy() {
 // run
 /***********************/
 
-// delete any previously cached json files created during old automation runs
-await deleteJsonFiles(packagePath);
-
 try {
   await handleAutomation();
-} catch {
+} catch (error) {
+  printMessage(AUTOMATION_STOP, { e: error as Error });
   process.exit();
 }
 

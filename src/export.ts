@@ -2,7 +2,7 @@
 import fs from 'fs/promises';
 import jsdom from 'jsdom';
 import { fileURLToPath } from 'url';
-import { MessageTypes, printMessage } from './util.js';
+import { MessageTypes, printMessage } from './utils/util.js';
 
 (async function () {
   const scriptPath = fileURLToPath(import.meta.url);

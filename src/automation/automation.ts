@@ -4,7 +4,12 @@ import { minify } from 'html-minifier-terser';
 import jsdom from 'jsdom';
 import yaml from 'js-yaml';
 import puppeteer from 'puppeteer';
-import { getFileName, MessageTypes, printMessage } from './util.js';
+import { getFileName, MessageTypes, printMessage } from '../utils/util.js';
+import {
+  IAutomationResultsStorage,
+  IResults,
+} from './AutomationResultsStorage.js';
+import { AutomationResult, Interaction } from './types.js';
 
 interface AutomationProps {
   automationCount: number;
@@ -45,8 +50,6 @@ export enum OutputType {
   JSON = 'json',
 }
 
-export type Output = { [_: string]: {} };
-
 type Flows = {
   [key: string]: string[];
 };
@@ -61,18 +64,23 @@ enum Actions {
 
 const { ERROR, NOTICE } = MessageTypes;
 
-export default async function automate({
-  automationCount,
-  averageOf,
-  cwd,
-  includeMount,
-  isServerReady,
-  packagePath,
-  serverPort,
-  url,
-  headless,
-  output,
-}: AutomationProps): Promise<Output | null> {
+export default async function automate(
+  props: AutomationProps,
+  resultsStorage: IAutomationResultsStorage
+): Promise<IResults | null> {
+  const {
+    automationCount,
+    averageOf,
+    cwd,
+    includeMount,
+    isServerReady,
+    packagePath,
+    serverPort,
+    url,
+    headless,
+    output,
+  } = props;
+
   const MOUNT = 'Mount';
 
   const browser = await puppeteer.launch({ headless });
@@ -80,27 +88,16 @@ export default async function automate({
 
   let errorMessage: string = '';
 
-  async function exportResults(): Promise<Output | null> {
+  async function exportResults(): Promise<IResults | null> {
     switch (output) {
       case OutputType.CHART: {
         await appendJsonToHTML();
         return null;
       }
       case OutputType.JSON: {
-        return await exportJsonBundle();
+        return exportJsonBundle();
       }
     }
-  }
-
-  async function getRawResults() {
-    let files = await fs.readdir(packagePath);
-    files = files.filter((file) => file.includes('.json'));
-    let results: { [_: string]: string } = {};
-    for (const file of files) {
-      const jsonContents = await fs.readFile(`${packagePath}/${file}`, 'utf8');
-      results[file] = jsonContents;
-    }
-    return results;
   }
 
   async function appendJsonToHTML() {
@@ -110,17 +107,17 @@ export default async function automate({
       const { document } = new JSDOM(`${contents}`).window;
       document.querySelectorAll('.json')?.forEach((item) => item.remove());
 
-      const rawResults = await getRawResults();
-      Object.keys(rawResults).forEach((fileName) => {
-        const jsonScript = document.createElement('script');
+      const results = resultsStorage.getAllResults();
 
-        const idArr = fileName.split('-');
-        jsonScript.id =
-          averageOf > 1 ? `${idArr[1]}-${idArr[2]}` : `${idArr[0]}-${idArr[1]}`;
+      Object.keys(results).forEach((flowKey) => {
+        const jsonScript = document.createElement('script');
+        const result = results[flowKey][0];
+        const idArr = result.id.split('-');
+
+        jsonScript.id = `${idArr[0]}-${idArr[1]}`;
         jsonScript.classList.add('json');
         jsonScript.type = 'application/json';
-
-        jsonScript.innerHTML = rawResults[fileName];
+        jsonScript.innerHTML = JSON.stringify(result);
         document.body.appendChild(jsonScript);
       });
       await fs.writeFile(
@@ -134,39 +131,16 @@ export default async function automate({
     }
   }
 
-  async function exportJsonBundle(): Promise<Output | null> {
-    const rawResults = await getRawResults();
-
-    const result: Output = {};
-
-    Object.keys(rawResults).forEach((fileName) => {
-      const parsedResult = JSON.parse(rawResults[fileName]);
-      result[fileName] = parsedResult;
-    });
-
-    const pathName = `${process.cwd()}/${getFileName('react_profile')}`;
-    await fs.writeFile(pathName, JSON.stringify(result));
-    printMessage(NOTICE, { log: `Results saved to ${pathName}` });
-
-    return result;
+  function exportJsonBundle(): IResults {
+    return resultsStorage.getAllResults();
   }
 
-  async function calculateAverage(): Promise<Output | null> {
+  async function calculateAverage(): Promise<IResults | null> {
     try {
-      const files = await fs.readdir(packagePath);
+      const results = resultsStorage.getAllResults();
+      const flows = Object.keys(results);
 
-      const flows = new Set(
-        files
-          .filter((file) => file.includes('.json'))
-          .map((file) => file.split('-')[0])
-          .filter((name) => name !== 'average')
-      );
-
-      for (const [i, flow] of [...flows].entries()) {
-        const flowFiles = files.filter(
-          (file) => !file.includes('average-') && file.includes(`${flow}-`)
-        );
-
+      flows.forEach(async (flowKey, i) => {
         const sumLogs: {
           actualDuration: number;
           baseDuration: number;
@@ -179,11 +153,10 @@ export default async function automate({
 
         let sumNumberOfInteractions = 0;
 
-        for (const file of flowFiles) {
-          const contents = JSON.parse(
-            await fs.readFile(`${packagePath}/${file}`, 'utf8')
-          );
-          const { logs } = contents;
+        const flowResults = results[flowKey];
+
+        flowResults.forEach((result) => {
+          const { logs, numberOfInteractions } = result;
 
           for (const [index, log] of logs.entries()) {
             if (typeof sumLogs[index] !== 'object' || sumLogs[index] === null)
@@ -192,7 +165,7 @@ export default async function automate({
                 baseDuration: 0,
                 commitTime: 0,
                 id: '',
-                interactions: {},
+                interactions: new Set<Interaction>(),
                 phase: '',
                 startTime: 0,
               };
@@ -205,32 +178,33 @@ export default async function automate({
             if (!sumLogs[index].phase) sumLogs[index].phase = log.phase;
           }
 
-          sumNumberOfInteractions += contents.numberOfInteractions;
+          sumNumberOfInteractions += numberOfInteractions;
+        });
 
-          await fs.unlink(`${packagePath}/${file}`);
-        }
-
-        const averagedData = {
+        const averageData: AutomationResult = {
           logs: sumLogs.map((log) => ({
             actualDuration: log.actualDuration / averageOf,
             baseDuration: log.baseDuration / averageOf,
             commitTime: log.commitTime / averageOf,
             id: log.id,
-            interactions: log.interactions,
+            interactions: log.interactions as Set<Interaction>,
             phase: log.phase,
             startTime: log.startTime / averageOf,
           })),
           numberOfInteractions: sumNumberOfInteractions / averageOf,
+          id: getFileName(flowKey),
         };
-        await fs.writeFile(
-          `${packagePath}/average-${flow}${getFileName()}`,
-          JSON.stringify(averagedData)
-        );
 
-        if (averageOf === automationCount && i === flows.size - 1) {
+        resultsStorage.removeResultsByKey(flowKey);
+        resultsStorage.appendResult(`average-${flowKey}`, averageData);
+
+        if (averageOf === automationCount && i === flows.length - 1) {
           return await exportResults();
         }
-      }
+
+        return averageData;
+      });
+
       return null;
     } catch (e) {
       errorMessage = 'An error occurred while calculating averages.';
@@ -248,19 +222,14 @@ export default async function automate({
   }) {
     if (label !== MOUNT || (label === MOUNT && includeMount)) {
       const logs = await page.evaluate(() => window.profiler);
-      const fileName = getFileName(label);
+
       if (logs.length === 0) return false;
 
-      try {
-        await fs.writeFile(
-          `${packagePath}/${fileName}`,
-          JSON.stringify({ logs, numberOfInteractions })
-        );
-      } catch (e) {
-        errorMessage =
-          'An error occurred while collecting automation log data.';
-        printMessage(ERROR, { e: <Error>e, log: errorMessage });
-      }
+      resultsStorage.appendResult(label, {
+        logs,
+        numberOfInteractions,
+        id: getFileName(label),
+      });
     }
     await page.evaluate(() => {
       window.profiler = [];
@@ -398,7 +367,7 @@ export default async function automate({
   await runFlows();
   await browser.close();
 
-  let results: Output | null = {};
+  let results: IResults | null = {};
 
   if (averageOf > 1 && automationCount === averageOf) {
     results = await calculateAverage();

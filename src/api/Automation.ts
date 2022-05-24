@@ -1,32 +1,32 @@
-import automate, { Output, OutputType } from '../automation.js';
+import automate, { OutputType } from '../automation/automation.js';
 import { Options } from '../bin.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { deleteJsonFiles } from '../file.util.js';
+import {
+  AutomationResultsStorage,
+  IResults,
+} from '../automation/AutomationResultsStorage.js';
 
-type APIOptions = Omit<
-  Options,
-  'headless' | 'output' | 'watch' | 'changeInterval' | 'port'
->;
+type APIOptions = Omit<Options, 'output' | 'watch' | 'changeInterval' | 'port'>;
 
 export class Automation {
   static async run({
     averageOf = 1,
     includeMount = false,
     page,
-  }: APIOptions): Promise<Output> {
-    let results: Output = {};
+    headless = true,
+  }: APIOptions): Promise<IResults> {
+    let results: IResults = {};
     const scriptPath = fileURLToPath(import.meta.url);
     const packagePath = `${scriptPath.slice(0, scriptPath.lastIndexOf('/'))}`;
-
-    await deleteJsonFiles(packagePath);
+    const resultsStorage = new AutomationResultsStorage();
 
     for (
       let automationCount = 1;
       automationCount <= averageOf;
       automationCount++
     ) {
-      const automationResult = await automate({
+      const props = {
         automationCount,
         averageOf,
         cwd: path.resolve(),
@@ -35,9 +35,12 @@ export class Automation {
         packagePath,
         serverPort: 0,
         url: page,
-        headless: true,
+        headless,
         output: OutputType.JSON,
-      });
+      };
+
+      const automationResult = await automate(props, resultsStorage);
+
       if (automationResult) {
         results = automationResult;
       }
